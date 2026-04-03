@@ -1,1 +1,246 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Staff Pager - บ้านประคบทอง</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #F2F4F7; --card-bg: #ffffff;
+            --text-main: #1C1C1E; --text-muted: #8E8E93;
+            --gold-light: #EED28A; --gold-primary: #D4AF37; --gold-dark: #B8860B;
+            --danger: #FF3B30; --success: #34C759; --info: #0A84FF; 
+            --radius-card: 24px; --radius-btn: 18px;
+            --transition-fluid: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
 
+        body { font-family: 'Kanit', sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; color: var(--text-main); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden; }
+        .container { width: 100%; max-width: 400px; padding: 24px; box-sizing: border-box; text-align: center; }
+
+        .card { background: var(--card-bg); padding: 30px 24px; border-radius: var(--radius-card); box-shadow: 0 10px 30px rgba(0,0,0,0.08); width: 100%; box-sizing: border-box; animation: fadeIn 0.4s ease; }
+        
+        .form-control { width: 100%; padding: 16px; border-radius: var(--radius-btn); border: 2px solid #E5E5EA; background: #F9F9F9; color: var(--text-main); font-family: 'Kanit', sans-serif; font-size: 16px; box-sizing: border-box; margin-bottom: 16px; outline: none; transition: var(--transition-fluid); text-align: center; }
+        .form-control:focus { border-color: var(--gold-primary); }
+
+        .btn { width: 100%; padding: 16px; border-radius: var(--radius-btn); border: none; font-family: 'Kanit', sans-serif; font-size: 18px; font-weight: 600; cursor: pointer; transition: var(--transition-fluid); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .btn:active { transform: scale(0.95); }
+        .btn-gold { background: linear-gradient(135deg, var(--gold-light), var(--gold-dark)); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        
+        /* 🚨 หน้าจอแจ้งเตือน (ซ่อนไว้ก่อน) */
+        #alert-screen { display: none; position: fixed; inset: 0; background: var(--danger); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; color: white; padding: 20px; text-align: center; animation: flashBg 1s infinite alternate; }
+        
+        @keyframes flashBg { 0% { background: var(--danger); } 100% { background: #CC0000; } }
+        @keyframes pop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .alert-box { background: white; color: var(--text-main); padding: 30px; border-radius: 24px; width: 100%; max-width: 350px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        
+        .pulse-icon { font-size: 60px; margin-bottom: 10px; animation: pop 0.5s infinite alternate; }
+        
+        #loading { color: var(--text-muted); font-size: 14px; margin-top: 16px; }
+        
+        /* วงกลมเรดาร์กำลังรอคิว */
+        .radar { width: 80px; height: 80px; background: rgba(212, 175, 55, 0.2); border-radius: 50%; margin: 30px auto; position: relative; display: flex; align-items: center; justify-content: center; font-size: 30px; }
+        .radar::before { content: ''; position: absolute; inset: -20px; border: 2px solid var(--gold-primary); border-radius: 50%; opacity: 0; animation: wave 2s infinite linear; }
+        @keyframes wave { 0% { transform: scale(0.5); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+    </style>
+</head>
+<body>
+
+<div id="login-screen" class="container card">
+    <h1 style="color:var(--gold-dark); margin:0 0 8px 0;">ระบบรับงาน</h1>
+    <p style="color:var(--text-muted); margin-bottom: 24px;">เลือกชื่อของคุณเพื่อเข้าสู่ระบบ</p>
+    <select id="dr-select" class="form-control">
+        <option value="" disabled selected>กำลังโหลดรายชื่อพนักงาน...</option>
+    </select>
+    <button class="btn btn-gold" onclick="login()">เข้าสู่ระบบ</button>
+</div>
+
+<div id="start-screen" class="container card" style="display:none;">
+    <h2 style="margin-top:0;">สวัสดี, <span id="dr-name-display" style="color:var(--gold-dark);"></span></h2>
+    <p style="color:var(--text-muted); font-size:14px;">กรุณากดปุ่มด้านล่างเพื่อเปิดรับการแจ้งเตือน (เปิดเสียงและสั่น)</p>
+    <button class="btn btn-success" onclick="startPager()" style="padding: 20px; font-size:20px;">▶️ เริ่มรับงาน</button>
+    <button onclick="logout()" style="background:none; border:none; color:var(--danger); margin-top:16px; cursor:pointer; font-family:'Kanit';">เปลี่ยนชื่อพนักงาน</button>
+</div>
+
+<div id="standby-screen" class="container card" style="display:none;">
+    <h2 style="margin-top:0; color:var(--success);">สถานะ: พร้อมทำงาน</h2>
+    <div class="radar">💆</div>
+    <h3 id="dr-standby-name"></h3>
+    <p style="color:var(--text-muted); font-size:14px;">เปิดหน้านี้ทิ้งไว้ ระบบจะสั่นเตือนเมื่อมีคิวงานใหม่เข้า</p>
+    <p id="last-sync" style="font-size:11px; color:#ccc;">ซิงค์ล่าสุด: -</p>
+</div>
+
+<div id="alert-screen">
+    <div class="alert-box">
+        <div class="pulse-icon">🔔</div>
+        <h1 style="color:var(--danger); margin: 0 0 8px 0; font-size:28px;">มีคิวงานใหม่!</h1>
+        <div style="background:#F2F4F7; padding: 16px; border-radius: 16px; margin: 20px 0; text-align: left;">
+            <p style="margin:4px 0;"><strong>ลูกค้า:</strong> <span id="a-cust" style="color:var(--info);"></span></p>
+            <p style="margin:4px 0;"><strong>บริการ:</strong> <span id="a-serv"></span></p>
+            <p style="margin:4px 0;"><strong>เวลา:</strong> <span id="a-time"></span></p>
+            <p style="margin:4px 0;"><strong>หมายเหตุ:</strong> <span id="a-note" style="color:var(--danger);"></span></p>
+        </div>
+        <button class="btn btn-success" style="padding: 20px; font-size:22px; width:100%;" onclick="acknowledgeJob()">✅ รับทราบงาน</button>
+    </div>
+</div>
+
+<script>
+    // 🚨 ใส่ SCRIPT_URL อันเดียวกับระบบหลักของมึง!
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx0mlNpEdpiHe9wLPb_LgPopHFtC8GYchP7wImRRGx4YMb0k4zgPBDWUsZq2RhoXSXW/exec"; 
+    
+    let myName = localStorage.getItem('pager_dr_name');
+    let wakeLock = null;
+    let pollInterval = null;
+    let alertInterval = null;
+    let audioCtx = null;
+    let currentJobId = null;
+
+    // ฟังก์ชันสร้างเสียง ติ๊งหน่อง แบบไม่ต้องใช้ไฟล์ MP3
+    function playAlertSound() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime); // โน้ตสูง (ติ๊ง)
+        osc.frequency.setValueAtTime(1108.73, audioCtx.currentTime + 0.1); 
+        
+        gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+        gainNode.gain.linearRampToValueAtTime(1, audioCtx.currentTime + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+        
+        osc.start(audioCtx.currentTime);
+        osc.stop(audioCtx.currentTime + 0.5);
+    }
+
+    // โหลดรายชื่อหมอตอนเปิดเว็บ
+    window.onload = async () => {
+        if(myName) {
+            showScreen('start-screen');
+            document.getElementById('dr-name-display').innerText = myName;
+        } else {
+            try {
+                let res = await fetch(SCRIPT_URL + "?type=light");
+                let data = await res.json();
+                let options = '<option value="" disabled selected>-- เลือกชื่อของคุณ --</option>';
+                data.drs.forEach(d => { options += `<option value="${d.n}">${d.n}</option>`; });
+                document.getElementById('dr-select').innerHTML = options;
+            } catch(e) {
+                document.getElementById('dr-select').innerHTML = '<option value="" disabled>โหลดข้อมูลล้มเหลว กรุณารีเฟรช</option>';
+            }
+        }
+    };
+
+    function login() {
+        let sel = document.getElementById('dr-select').value;
+        if(!sel) return alert('กรุณาเลือกชื่อ!');
+        myName = sel;
+        localStorage.setItem('pager_dr_name', myName);
+        document.getElementById('dr-name-display').innerText = myName;
+        showScreen('start-screen');
+    }
+
+    function logout() {
+        localStorage.removeItem('pager_dr_name');
+        location.reload();
+    }
+
+    function showScreen(id) {
+        ['login-screen', 'start-screen', 'standby-screen'].forEach(s => {
+            document.getElementById(s).style.display = (s === id) ? 'block' : 'none';
+        });
+    }
+
+    // เจาะเกราะ Browser (ขอ WakeLock + เล่นเสียงหลอกเพื่อเปิด AudioContext)
+    async function startPager() {
+        // สร้าง AudioContext (ต้องเกิดจากการคลิกของ User)
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        audioCtx.resume();
+        
+        // ขอ WakeLock ไม่ให้จอดับ
+        try {
+            if ('wakeLock' in navigator) {
+                wakeLock = await navigator.wakeLock.request('screen');
+            }
+        } catch (err) { console.log('Wake Lock ไม่รองรับบนเครื่องนี้'); }
+
+        // สั่นเทส 1 ที (ขอ Permission สั่น)
+        if(navigator.vibrate) navigator.vibrate(200);
+
+        document.getElementById('dr-standby-name').innerText = "พนักงาน: " + myName;
+        showScreen('standby-screen');
+        
+        // เริ่มวงจรดึงข้อมูลทุก 10 วิ
+        pollData();
+        pollInterval = setInterval(pollData, 10000); 
+    }
+
+    async function pollData() {
+        try {
+            let res = await fetch(SCRIPT_URL + "?t=" + Date.now() + "&type=light");
+            let data = await res.json();
+            
+            let dObj = new Date();
+            document.getElementById('last-sync').innerText = "ซิงค์ล่าสุด: " + dObj.toLocaleTimeString('th-TH');
+
+            // 🚀 หาคิวของตัวเอง ที่กำลัง active และ "ยังไม่ได้กดรับทราบ"
+            let myJob = data.qs.find(q => q.dr === myName && q.status === 'active' && q.staffAck !== true);
+
+            if(myJob) {
+                triggerAlert(myJob);
+            }
+        } catch(e) { console.log('Sync Error'); }
+    }
+
+    function triggerAlert(job) {
+        if(document.getElementById('alert-screen').style.display === 'flex') return; // กันเด้งซ้ำ
+        
+        currentJobId = job.id;
+        
+        document.getElementById('a-cust').innerText = job.n;
+        document.getElementById('a-serv').innerText = `${job.t} (${job.d} นาที)`;
+        document.getElementById('a-time').innerText = job.time;
+        document.getElementById('a-note').innerText = job.note || "-";
+
+        document.getElementById('alert-screen').style.display = 'flex';
+
+        // 🚀 สั่งสั่นแบบหนักๆ และร้องเตือนทุก 2 วินาที จนกว่าจะกดรับ
+        triggerFeedback();
+        alertInterval = setInterval(triggerFeedback, 2000);
+    }
+
+    function triggerFeedback() {
+        playAlertSound();
+        if(navigator.vibrate) {
+            navigator.vibrate([500, 200, 500, 200, 500]); // สั่นเป็นจังหวะ
+        }
+    }
+
+    async function acknowledgeJob() {
+        // หยุดเสียงหยุดสั่น
+        clearInterval(alertInterval);
+        if(navigator.vibrate) navigator.vibrate(0);
+        
+        document.getElementById('alert-screen').style.display = 'none';
+
+        // 🚀 ส่งข้อมูลกลับไปบอก Server ว่า "รับทราบแล้วนะ"
+        try {
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'UPDATE_ACK', id: currentJobId })
+            });
+        } catch(e) { console.error("Ack Error", e); }
+        
+        currentJobId = null;
+    }
+</script>
+</body>
+</html>

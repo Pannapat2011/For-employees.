@@ -29,6 +29,7 @@
         .btn-success { background: var(--success); color: white; }
         .btn-danger { background: var(--danger); color: white; }
         .btn-outline { background: transparent; border: 2px solid var(--text-muted); color: var(--text-muted); box-shadow: none; }
+        .btn-warning { background: var(--warning); color: white; }
         
         #alert-screen { display: none; position: fixed; inset: 0; background: var(--danger); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; color: white; padding: 20px; text-align: center; animation: flashBg 1s infinite alternate; }
         
@@ -44,10 +45,15 @@
         @keyframes wave { 0% { transform: scale(0.5); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
 
         .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); display: none; align-items: center; justify-content: center; z-index: 10000; backdrop-filter: blur(10px); }
-        .modal-content { background: white; padding: 24px; border-radius: var(--radius-card); width: 90%; max-width: 350px; max-height: 80vh; overflow-y: auto; text-align: left; }
+        .modal-content { background: white; padding: 24px; border-radius: var(--radius-card); width: 90%; max-width: 350px; max-height: 80vh; overflow-y: auto; text-align: center; }
+
+        /* 🚨 ป้ายเตือนเน็ตหลุด */
+        #offline-banner { display: none; position: fixed; top: 0; left: 0; width: 100%; background: var(--danger); color: white; padding: 12px; text-align: center; font-weight: bold; z-index: 10050; font-size: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
+
+<div id="offline-banner">⚠️ สัญญาณอินเทอร์เน็ตขาดหาย! กรุณาเช็คเน็ต</div>
 
 <div id="login-screen" class="container card">
     <h1 style="color:var(--gold-dark); margin:0 0 8px 0;">ระบบพนักงาน</h1>
@@ -70,11 +76,25 @@
     <div class="radar">💆</div>
     <h3 id="dr-standby-name"></h3>
     <p style="color:var(--text-muted); font-size:14px;">เปิดหน้านี้ทิ้งไว้ ระบบจะสั่นเตือนเมื่อมีคิวงาน</p>
-    <button class="btn btn-outline" style="margin-top: 12px; font-size: 15px; padding: 10px;" onclick="showMyWork()">📊 สรุปประวัติงานวันนี้</button>
+    
+    <div style="display: flex; gap: 8px; margin-top: 16px;">
+        <button class="btn btn-outline" style="font-size: 14px; padding: 10px;" onclick="takeBreak()">☕ ขอพักเบรก (เข้าห้องน้ำ/กินข้าว)</button>
+    </div>
+    <button class="btn btn-outline" style="margin-top: 8px; font-size: 15px; padding: 10px; border-color:var(--info); color:var(--info);" onclick="showMyWork()">📊 สรุปประวัติงานวันนี้</button>
+</div>
+
+<div id="break-screen" class="container card" style="display:none; border: 2px solid var(--warning);">
+    <h2 style="margin-top:0; color:var(--warning);">☕ กำลังพักเบรก</h2>
+    <p style="color:var(--text-muted); font-size:14px;">สถานะของคุณคือ "ไม่ว่าง" แอดมินจะไม่สามารถลงคิวให้ได้</p>
+    <button class="btn btn-success" style="padding: 20px; font-size:20px; margin-top: 24px;" onclick="backToWork()">🏃‍♂️ กลับมารับงานต่อ</button>
 </div>
 
 <div id="active-job-screen" class="container card" style="display:none; border: 2px solid var(--gold-primary);">
     <h2 style="margin-top:0; color:var(--gold-dark);">🔥 กำลังให้บริการ</h2>
+    
+    <h1 id="job-timer" style="font-size: 54px; color: var(--danger); margin: 10px 0; font-weight: 600;">00:00</h1>
+    <p style="color:var(--text-muted); font-size:12px; margin-top:-10px;">เวลาคงเหลือโดยประมาณ</p>
+
     <div style="background:#F9F9F9; padding: 16px; border-radius: 16px; margin: 16px 0; text-align: left;">
         <p style="margin:4px 0; font-size: 18px;"><strong>คุณ:</strong> <span id="act-cust" style="color:var(--info);"></span></p>
         <p style="margin:4px 0;"><strong>บริการ:</strong> <span id="act-serv"></span></p>
@@ -82,7 +102,7 @@
         <p style="margin:4px 0;"><strong>หมายเหตุ:</strong> <span id="act-note" style="color:var(--danger);"></span></p>
     </div>
     
-    <button class="btn btn-success" style="padding: 20px; font-size:20px;" onclick="finishJob()">✅ นวดเสร็จแล้ว</button>
+    <button class="btn btn-success" style="padding: 20px; font-size:20px;" onclick="openFinishModal()">✅ นวดเสร็จแล้ว</button>
     <button class="btn btn-danger" style="margin-top: 8px;" onclick="callAdmin()">🆘 เรียกแอดมินด่วน</button>
 </div>
 
@@ -96,30 +116,43 @@
             <p style="margin:4px 0;"><strong>เวลา:</strong> <span id="a-time"></span></p>
             <p style="margin:4px 0;"><strong>หมายเหตุ:</strong> <span id="a-note" style="color:var(--danger);"></span></p>
         </div>
-        <button class="btn btn-success" style="padding: 20px; font-size:22px;" onclick="acknowledgeJob()">✅ รับทราบงาน</button>
+        <button class="btn btn-success" style="padding: 20px; font-size:22px; width:100%;" onclick="acknowledgeJob()">✅ รับทราบงาน</button>
     </div>
 </div>
 
 <div id="my-work-modal" class="modal-overlay">
     <div class="modal-content">
-        <h2 style="margin-top: 0; color: var(--gold-dark); text-align: center;">📊 สรุปงานของฉันวันนี้</h2>
-        <div id="work-log-content" style="font-size: 14px; margin-bottom: 20px;">กำลังโหลด...</div>
+        <h2 style="margin-top: 0; color: var(--gold-dark);">📊 สรุปงานของฉันวันนี้</h2>
+        <div id="work-log-content" style="font-size: 14px; margin-bottom: 20px; max-height: 40vh; overflow-y:auto; text-align:left;">กำลังโหลด...</div>
         <button class="btn btn-gold" onclick="document.getElementById('my-work-modal').style.display='none'">ปิดหน้าต่าง</button>
     </div>
 </div>
 
+<div id="finish-modal" class="modal-overlay">
+    <div class="modal-content">
+        <h2 style="margin-top: 0; color: var(--success);">✅ สรุปการให้บริการ</h2>
+        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">(เลือกพิมพ์) บันทึกความชอบลูกค้าเพื่อใช้บริการครั้งหน้า</p>
+        <textarea id="dr-note" class="form-control" rows="3" placeholder="เช่น ลูกค้าชอบนวดบ่าหนักๆ, ลูกค้าแพ้ยาหม่อง..." style="resize:none; text-align:left;"></textarea>
+        <button class="btn btn-success" style="margin-bottom: 8px;" onclick="confirmFinishJob()">ส่งข้อมูลและจบงาน</button>
+        <button class="btn btn-outline" onclick="document.getElementById('finish-modal').style.display='none'">ยกเลิก</button>
+    </div>
+</div>
+
 <script>
-    // 🚨 ใส่ SCRIPT_URL อันเดียวกับระบบแอดมิน!
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx0mlNpEdpiHe9wLPb_LgPopHFtC8GYchP7wImRRGx4YMb0k4zgPBDWUsZq2RhoXSXW/exec"; 
-    // 🚀 Discord Webhook สำหรับพนักงานเรียกแอดมิน
     const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1489169746934108170/YxvxW_vJ5E8eb1m30rWmlELObxgNMssrUdOy2IAhi6K8xtL2QIu8MxflQeAMVAq1NqCu";
 
     let myName = localStorage.getItem('pager_dr_name');
     let pollInterval = null;
     let alertInterval = null;
+    let countdownInterval = null;
     let audioCtx = null;
     let currentJobId = null;
     let localQs = []; 
+
+    // 🚀 เช็คเน็ตหลุด
+    window.addEventListener('offline', () => document.getElementById('offline-banner').style.display = 'block');
+    window.addEventListener('online', () => document.getElementById('offline-banner').style.display = 'none');
 
     function playAlertSound() {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -168,7 +201,7 @@
     }
 
     function showScreen(id) {
-        ['login-screen', 'start-screen', 'standby-screen', 'active-job-screen'].forEach(s => {
+        ['login-screen', 'start-screen', 'standby-screen', 'active-job-screen', 'break-screen'].forEach(s => {
             document.getElementById(s).style.display = (s === id) ? 'block' : 'none';
         });
     }
@@ -182,25 +215,29 @@
         document.getElementById('dr-standby-name').innerText = "พนักงาน: " + myName;
         showScreen('standby-screen');
         pollData();
-        pollInterval = setInterval(pollData, 10000); // เช็คงานทุก 10 วิ
+        pollInterval = setInterval(pollData, 10000); 
     }
 
     async function pollData() {
         try {
             let res = await fetch(SCRIPT_URL + "?t=" + Date.now() + "&type=light");
             let data = await res.json();
-            localQs = data.qs || []; // เก็บไว้คำนวณประวัติ
+            localQs = data.qs || []; 
 
-            // 🚀 หาคิวของตัวเอง ที่กำลัง active
+            // เช็คว่าพักเบรกอยู่หรือเปล่า
+            let me = data.drs.find(d => d.n === myName);
+            if(me && me.st === 'break') {
+                showScreen('break-screen');
+                return;
+            }
+
             let myJob = data.qs.find(q => q.dr === myName && q.status === 'active');
 
             if(myJob) {
                 currentJobId = myJob.id;
                 if(!myJob.staffAck) {
-                    // ถ้ายัวไม่กดรับทราบ ให้สั่นเตือน!
                     triggerAlert(myJob);
                 } else {
-                    // ถ้ากดรับทราบแล้ว ให้โชว์หน้า "กำลังให้บริการ" (มีปุ่มกดจบงาน)
                     document.getElementById('alert-screen').style.display = 'none';
                     document.getElementById('act-cust').innerText = myJob.n;
                     let tNames = { 'thai': 'นวดไทย', 'foot': 'นวดเท้า', 'back': 'รีดเส้น', 'oil': 'นวดน้ำมัน', 'spa': 'ขัดผิว', 'face': 'นวดหน้า', 'herb': 'อบสมุนไพร' };
@@ -208,13 +245,43 @@
                     document.getElementById('act-time').innerText = myJob.time;
                     document.getElementById('act-note').innerText = myJob.note || "-";
                     showScreen('active-job-screen');
+                    
+                    // 🚀 เริ่มนับถอยหลังเวลาทำงาน
+                    startCountdown(myJob.startTime, myJob.d);
                 }
             } else {
-                // ถ้าไม่มีงาน active เลย ก็กลับไปหน้า Standby
                 document.getElementById('alert-screen').style.display = 'none';
+                stopCountdown();
                 showScreen('standby-screen');
             }
         } catch(e) { console.log('Sync Error'); }
+    }
+
+    // 🚀 ฟังก์ชันนับถอยหลัง
+    function startCountdown(startTime, durationMins) {
+        if(countdownInterval) clearInterval(countdownInterval);
+        
+        let endTime = startTime + (durationMins * 60000);
+        
+        countdownInterval = setInterval(() => {
+            let timeLeft = endTime - Date.now();
+            let timerEl = document.getElementById('job-timer');
+            
+            if(timeLeft <= 0) {
+                timerEl.innerText = "หมดเวลา!";
+                timerEl.style.color = "var(--danger)";
+                clearInterval(countdownInterval);
+            } else {
+                let m = Math.floor(timeLeft / 60000);
+                let s = Math.floor((timeLeft % 60000) / 1000);
+                timerEl.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+                timerEl.style.color = (m < 5) ? "var(--danger)" : "var(--success)"; // เตือน 5 นาทีสุดท้าย
+            }
+        }, 1000);
+    }
+
+    function stopCountdown() {
+        if(countdownInterval) clearInterval(countdownInterval);
     }
 
     function triggerAlert(job) {
@@ -241,45 +308,66 @@
         if(navigator.vibrate) navigator.vibrate(0);
         document.getElementById('alert-screen').style.display = 'none';
 
-        // ส่งข้อมูลบอกระบบว่ารับทราบแล้วนะ
         fetch(SCRIPT_URL, {
             method: 'POST',
             body: JSON.stringify({ action: 'UPDATE_ACK', id: currentJobId })
         });
         
-        // เด้งไปหน้ากำลังนวดทันที (หลอกตาให้เร็วขึ้น)
         pollData(); 
     }
 
-    // 🚀 [ใหม่] พนักงานกดจบงานเอง
-    function finishJob() {
-        if(!confirm("ยืนยันว่านวดเสร็จเรียบร้อยแล้วใช่หรือไม่? (คุณจะกลับสู่สถานะว่างรับงาน)")) return;
-        
-        showScreen('standby-screen'); // เด้งกลับหน้าว่างทันที
-        
+    // 🚀 ระบบพักเบรก
+    function takeBreak() {
+        if(!confirm("ต้องการพักเบรกใช่หรือไม่? แอดมินจะไม่สามารถลงคิวให้คุณได้")) return;
+        showScreen('break-screen');
         fetch(SCRIPT_URL, {
             method: 'POST',
-            body: JSON.stringify({ action: 'FINISH_JOB', id: currentJobId })
+            body: JSON.stringify({ action: 'UPDATE_DR_STATUS', dr: myName, status: 'break' })
         });
     }
 
-    // 🚀 [ใหม่] พนักงานเรียกแอดมิน (ส่งเข้า Sheet & Discord)
+    function backToWork() {
+        showScreen('standby-screen');
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'UPDATE_DR_STATUS', dr: myName, status: 'free' })
+        });
+        alert("กลับมารับงานแล้ว!");
+    }
+
+    // 🚀 ระบบเปิด Modal ให้จดโน้ตลูกค้า
+    function openFinishModal() {
+        document.getElementById('dr-note').value = "";
+        document.getElementById('finish-modal').style.display = 'flex';
+    }
+
+    function confirmFinishJob() {
+        let noteTxt = document.getElementById('dr-note').value.trim();
+        
+        document.getElementById('finish-modal').style.display = 'none';
+        showScreen('standby-screen'); 
+        stopCountdown();
+        
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'FINISH_JOB', id: currentJobId, note: noteTxt })
+        });
+    }
+
     function callAdmin() {
         if(!confirm("ต้องการเรียกแอดมินมาที่ห้องนวดใช่หรือไม่?")) return;
 
         let timeStr = new Date().toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'});
         
-        // ส่งให้หน้าเว็บแอดมินเด้ง
         fetch(SCRIPT_URL, {
             method: 'POST',
             body: JSON.stringify({ action: 'CALL_ADMIN', dr: myName, timeStr: timeStr })
         });
 
-        // ส่งเข้า Discord เผื่อแอดมินเล่นมือถืออยู่
         const payload = {
             embeds: [{
                 title: "🆘 มีพนักงานเรียกความช่วยเหลือด่วน!",
-                color: 16711680, // สีแดง
+                color: 16711680, 
                 fields: [
                     { name: "พนักงานที่เรียก", value: myName, inline: true },
                     { name: "เวลาที่เรียก", value: timeStr, inline: true }
@@ -293,7 +381,6 @@
         alert("ส่งการแจ้งเตือนเรียกแอดมินแล้ว โปรดรอสักครู่!");
     }
 
-    // 🚀 [ใหม่] ดูประวัติงานของตัวเอง (คำนวณสดๆ)
     function showMyWork() {
         let myDoneJobs = localQs.filter(q => q.dr === myName && q.status === 'done');
         let totalCust = myDoneJobs.length;
@@ -302,14 +389,12 @@
 
         let tNames = { 'thai': 'นวดไทย', 'foot': 'นวดเท้า', 'back': 'รีดเส้น', 'oil': 'นวดน้ำมัน', 'spa': 'ขัดผิว', 'face': 'นวดหน้า', 'herb': 'อบสมุนไพร' };
 
-        let html = `<p style="text-align:center; font-size:18px; font-weight:bold;">สรุปยอดของ: ${myName}</p><hr>`;
-
+        let html = "";
         if(totalCust === 0) {
             html += `<p style="text-align:center; color:var(--text-muted);">ยังไม่มีงานที่เสร็จสิ้นในวันนี้</p>`;
         } else {
             myDoneJobs.forEach(q => {
                 totalMins += parseInt(q.d);
-                // จำลองสูตรคำนวณมือหมอแบบคร่าวๆ ให้ดู
                 let c = 0;
                 if(q.pm === 'course' || (q.note && q.note.includes("คอร์ส"))) {
                     c = (q.note && q.note.includes("รีดเส้น")) ? 300 : 200;
@@ -327,7 +412,7 @@
             html += `<hr>
                      <p><strong>รวมลูกค้า:</strong> ${totalCust} คน</p>
                      <p><strong>รวมเวลา:</strong> ${Math.floor(totalMins/60)} ชม. ${totalMins%60} น.</p>
-                     <p style="font-size:18px; color:var(--success);"><strong>ยอดเงินประเมิน: ${totalComm} ฿</strong></p>`;
+                     <p style="font-size:18px; color:var(--success); text-align:center;"><strong>ยอดเงินประเมิน: ${totalComm} ฿</strong></p>`;
         }
 
         document.getElementById('work-log-content').innerHTML = html;

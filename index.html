@@ -10,7 +10,7 @@
             --bg-color: #F2F4F7; --card-bg: #ffffff;
             --text-main: #1C1C1E; --text-muted: #8E8E93;
             --gold-light: #EED28A; --gold-primary: #D4AF37; --gold-dark: #B8860B;
-            --danger: #FF3B30; --success: #34C759; --info: #0A84FF; 
+            --danger: #FF3B30; --success: #34C759; --info: #0A84FF; --warning: #FF9500;
             --radius-card: 24px; --radius-btn: 18px;
             --transition-fluid: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
@@ -23,12 +23,13 @@
         .form-control { width: 100%; padding: 16px; border-radius: var(--radius-btn); border: 2px solid #E5E5EA; background: #F9F9F9; color: var(--text-main); font-family: 'Kanit', sans-serif; font-size: 16px; box-sizing: border-box; margin-bottom: 16px; outline: none; transition: var(--transition-fluid); text-align: center; }
         .form-control:focus { border-color: var(--gold-primary); }
 
-        .btn { width: 100%; padding: 16px; border-radius: var(--radius-btn); border: none; font-family: 'Kanit', sans-serif; font-size: 18px; font-weight: 600; cursor: pointer; transition: var(--transition-fluid); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .btn { width: 100%; padding: 16px; border-radius: var(--radius-btn); border: none; font-family: 'Kanit', sans-serif; font-size: 18px; font-weight: 600; cursor: pointer; transition: var(--transition-fluid); box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 12px; }
         .btn:active { transform: scale(0.95); }
         .btn-gold { background: linear-gradient(135deg, var(--gold-light), var(--gold-dark)); color: white; }
         .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-outline { background: transparent; border: 2px solid var(--text-muted); color: var(--text-muted); box-shadow: none; }
         
-        /* 🚨 หน้าจอแจ้งเตือน (ซ่อนไว้ก่อน) */
         #alert-screen { display: none; position: fixed; inset: 0; background: var(--danger); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; color: white; padding: 20px; text-align: center; animation: flashBg 1s infinite alternate; }
         
         @keyframes flashBg { 0% { background: var(--danger); } 100% { background: #CC0000; } }
@@ -36,21 +37,20 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .alert-box { background: white; color: var(--text-main); padding: 30px; border-radius: 24px; width: 100%; max-width: 350px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        
         .pulse-icon { font-size: 60px; margin-bottom: 10px; animation: pop 0.5s infinite alternate; }
         
-        #loading { color: var(--text-muted); font-size: 14px; margin-top: 16px; }
-        
-        /* วงกลมเรดาร์กำลังรอคิว */
         .radar { width: 80px; height: 80px; background: rgba(212, 175, 55, 0.2); border-radius: 50%; margin: 30px auto; position: relative; display: flex; align-items: center; justify-content: center; font-size: 30px; }
         .radar::before { content: ''; position: absolute; inset: -20px; border: 2px solid var(--gold-primary); border-radius: 50%; opacity: 0; animation: wave 2s infinite linear; }
         @keyframes wave { 0% { transform: scale(0.5); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); display: none; align-items: center; justify-content: center; z-index: 10000; backdrop-filter: blur(10px); }
+        .modal-content { background: white; padding: 24px; border-radius: var(--radius-card); width: 90%; max-width: 350px; max-height: 80vh; overflow-y: auto; text-align: left; }
     </style>
 </head>
 <body>
 
 <div id="login-screen" class="container card">
-    <h1 style="color:var(--gold-dark); margin:0 0 8px 0;">ระบบรับงาน</h1>
+    <h1 style="color:var(--gold-dark); margin:0 0 8px 0;">ระบบพนักงาน</h1>
     <p style="color:var(--text-muted); margin-bottom: 24px;">เลือกชื่อของคุณเพื่อเข้าสู่ระบบ</p>
     <select id="dr-select" class="form-control">
         <option value="" disabled selected>กำลังโหลดรายชื่อพนักงาน...</option>
@@ -60,7 +60,7 @@
 
 <div id="start-screen" class="container card" style="display:none;">
     <h2 style="margin-top:0;">สวัสดี, <span id="dr-name-display" style="color:var(--gold-dark);"></span></h2>
-    <p style="color:var(--text-muted); font-size:14px;">กรุณากดปุ่มด้านล่างเพื่อเปิดรับการแจ้งเตือน (เปิดเสียงและสั่น)</p>
+    <p style="color:var(--text-muted); font-size:14px;">กรุณากดปุ่มด้านล่างเพื่อเปิดรับการแจ้งเตือน (สั่น+เสียง)</p>
     <button class="btn btn-success" onclick="startPager()" style="padding: 20px; font-size:20px;">▶️ เริ่มรับงาน</button>
     <button onclick="logout()" style="background:none; border:none; color:var(--danger); margin-top:16px; cursor:pointer; font-family:'Kanit';">เปลี่ยนชื่อพนักงาน</button>
 </div>
@@ -69,8 +69,21 @@
     <h2 style="margin-top:0; color:var(--success);">สถานะ: พร้อมทำงาน</h2>
     <div class="radar">💆</div>
     <h3 id="dr-standby-name"></h3>
-    <p style="color:var(--text-muted); font-size:14px;">เปิดหน้านี้ทิ้งไว้ ระบบจะสั่นเตือนเมื่อมีคิวงานใหม่เข้า</p>
-    <p id="last-sync" style="font-size:11px; color:#ccc;">ซิงค์ล่าสุด: -</p>
+    <p style="color:var(--text-muted); font-size:14px;">เปิดหน้านี้ทิ้งไว้ ระบบจะสั่นเตือนเมื่อมีคิวงาน</p>
+    <button class="btn btn-outline" style="margin-top: 12px; font-size: 15px; padding: 10px;" onclick="showMyWork()">📊 สรุปประวัติงานวันนี้</button>
+</div>
+
+<div id="active-job-screen" class="container card" style="display:none; border: 2px solid var(--gold-primary);">
+    <h2 style="margin-top:0; color:var(--gold-dark);">🔥 กำลังให้บริการ</h2>
+    <div style="background:#F9F9F9; padding: 16px; border-radius: 16px; margin: 16px 0; text-align: left;">
+        <p style="margin:4px 0; font-size: 18px;"><strong>คุณ:</strong> <span id="act-cust" style="color:var(--info);"></span></p>
+        <p style="margin:4px 0;"><strong>บริการ:</strong> <span id="act-serv"></span></p>
+        <p style="margin:4px 0;"><strong>เริ่มตอน:</strong> <span id="act-time"></span></p>
+        <p style="margin:4px 0;"><strong>หมายเหตุ:</strong> <span id="act-note" style="color:var(--danger);"></span></p>
+    </div>
+    
+    <button class="btn btn-success" style="padding: 20px; font-size:20px;" onclick="finishJob()">✅ นวดเสร็จแล้ว</button>
+    <button class="btn btn-danger" style="margin-top: 8px;" onclick="callAdmin()">🆘 เรียกแอดมินด่วน</button>
 </div>
 
 <div id="alert-screen">
@@ -83,44 +96,48 @@
             <p style="margin:4px 0;"><strong>เวลา:</strong> <span id="a-time"></span></p>
             <p style="margin:4px 0;"><strong>หมายเหตุ:</strong> <span id="a-note" style="color:var(--danger);"></span></p>
         </div>
-        <button class="btn btn-success" style="padding: 20px; font-size:22px; width:100%;" onclick="acknowledgeJob()">✅ รับทราบงาน</button>
+        <button class="btn btn-success" style="padding: 20px; font-size:22px;" onclick="acknowledgeJob()">✅ รับทราบงาน</button>
+    </div>
+</div>
+
+<div id="my-work-modal" class="modal-overlay">
+    <div class="modal-content">
+        <h2 style="margin-top: 0; color: var(--gold-dark); text-align: center;">📊 สรุปงานของฉันวันนี้</h2>
+        <div id="work-log-content" style="font-size: 14px; margin-bottom: 20px;">กำลังโหลด...</div>
+        <button class="btn btn-gold" onclick="document.getElementById('my-work-modal').style.display='none'">ปิดหน้าต่าง</button>
     </div>
 </div>
 
 <script>
-    // 🚨 ใส่ SCRIPT_URL อันเดียวกับระบบหลักของมึง!
+    // 🚨 ใส่ SCRIPT_URL อันเดียวกับระบบแอดมิน!
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx0mlNpEdpiHe9wLPb_LgPopHFtC8GYchP7wImRRGx4YMb0k4zgPBDWUsZq2RhoXSXW/exec"; 
-    
+    // 🚀 Discord Webhook สำหรับพนักงานเรียกแอดมิน
+    const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1489169746934108170/YxvxW_vJ5E8eb1m30rWmlELObxgNMssrUdOy2IAhi6K8xtL2QIu8MxflQeAMVAq1NqCu";
+
     let myName = localStorage.getItem('pager_dr_name');
-    let wakeLock = null;
     let pollInterval = null;
     let alertInterval = null;
     let audioCtx = null;
     let currentJobId = null;
+    let localQs = []; 
 
-    // ฟังก์ชันสร้างเสียง ติ๊งหน่อง แบบไม่ต้องใช้ไฟล์ MP3
     function playAlertSound() {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         if (audioCtx.state === 'suspended') audioCtx.resume();
-
         const osc = audioCtx.createOscillator();
         const gainNode = audioCtx.createGain();
         osc.connect(gainNode);
         gainNode.connect(audioCtx.destination);
-        
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(880, audioCtx.currentTime); // โน้ตสูง (ติ๊ง)
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime); 
         osc.frequency.setValueAtTime(1108.73, audioCtx.currentTime + 0.1); 
-        
         gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
         gainNode.gain.linearRampToValueAtTime(1, audioCtx.currentTime + 0.05);
         gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
-        
         osc.start(audioCtx.currentTime);
         osc.stop(audioCtx.currentTime + 0.5);
     }
 
-    // โหลดรายชื่อหมอตอนเปิดเว็บ
     window.onload = async () => {
         if(myName) {
             showScreen('start-screen');
@@ -132,9 +149,7 @@
                 let options = '<option value="" disabled selected>-- เลือกชื่อของคุณ --</option>';
                 data.drs.forEach(d => { options += `<option value="${d.n}">${d.n}</option>`; });
                 document.getElementById('dr-select').innerHTML = options;
-            } catch(e) {
-                document.getElementById('dr-select').innerHTML = '<option value="" disabled>โหลดข้อมูลล้มเหลว กรุณารีเฟรช</option>';
-            }
+            } catch(e) { document.getElementById('dr-select').innerHTML = '<option value="" disabled>โหลดข้อมูลล้มเหลว รีเฟรชใหม่</option>'; }
         }
     };
 
@@ -153,93 +168,170 @@
     }
 
     function showScreen(id) {
-        ['login-screen', 'start-screen', 'standby-screen'].forEach(s => {
+        ['login-screen', 'start-screen', 'standby-screen', 'active-job-screen'].forEach(s => {
             document.getElementById(s).style.display = (s === id) ? 'block' : 'none';
         });
     }
 
-    // เจาะเกราะ Browser (ขอ WakeLock + เล่นเสียงหลอกเพื่อเปิด AudioContext)
     async function startPager() {
-        // สร้าง AudioContext (ต้องเกิดจากการคลิกของ User)
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         audioCtx.resume();
-        
-        // ขอ WakeLock ไม่ให้จอดับ
-        try {
-            if ('wakeLock' in navigator) {
-                wakeLock = await navigator.wakeLock.request('screen');
-            }
-        } catch (err) { console.log('Wake Lock ไม่รองรับบนเครื่องนี้'); }
-
-        // สั่นเทส 1 ที (ขอ Permission สั่น)
+        try { if ('wakeLock' in navigator) await navigator.wakeLock.request('screen'); } catch (err) {}
         if(navigator.vibrate) navigator.vibrate(200);
 
         document.getElementById('dr-standby-name').innerText = "พนักงาน: " + myName;
         showScreen('standby-screen');
-        
-        // เริ่มวงจรดึงข้อมูลทุก 10 วิ
         pollData();
-        pollInterval = setInterval(pollData, 10000); 
+        pollInterval = setInterval(pollData, 10000); // เช็คงานทุก 10 วิ
     }
 
     async function pollData() {
         try {
             let res = await fetch(SCRIPT_URL + "?t=" + Date.now() + "&type=light");
             let data = await res.json();
-            
-            let dObj = new Date();
-            document.getElementById('last-sync').innerText = "ซิงค์ล่าสุด: " + dObj.toLocaleTimeString('th-TH');
+            localQs = data.qs || []; // เก็บไว้คำนวณประวัติ
 
-            // 🚀 หาคิวของตัวเอง ที่กำลัง active และ "ยังไม่ได้กดรับทราบ"
-            let myJob = data.qs.find(q => q.dr === myName && q.status === 'active' && q.staffAck !== true);
+            // 🚀 หาคิวของตัวเอง ที่กำลัง active
+            let myJob = data.qs.find(q => q.dr === myName && q.status === 'active');
 
             if(myJob) {
-                triggerAlert(myJob);
+                currentJobId = myJob.id;
+                if(!myJob.staffAck) {
+                    // ถ้ายัวไม่กดรับทราบ ให้สั่นเตือน!
+                    triggerAlert(myJob);
+                } else {
+                    // ถ้ากดรับทราบแล้ว ให้โชว์หน้า "กำลังให้บริการ" (มีปุ่มกดจบงาน)
+                    document.getElementById('alert-screen').style.display = 'none';
+                    document.getElementById('act-cust').innerText = myJob.n;
+                    let tNames = { 'thai': 'นวดไทย', 'foot': 'นวดเท้า', 'back': 'รีดเส้น', 'oil': 'นวดน้ำมัน', 'spa': 'ขัดผิว', 'face': 'นวดหน้า', 'herb': 'อบสมุนไพร' };
+                    document.getElementById('act-serv').innerText = `${tNames[myJob.t] || myJob.t} (${myJob.d} นาที)`;
+                    document.getElementById('act-time').innerText = myJob.time;
+                    document.getElementById('act-note').innerText = myJob.note || "-";
+                    showScreen('active-job-screen');
+                }
+            } else {
+                // ถ้าไม่มีงาน active เลย ก็กลับไปหน้า Standby
+                document.getElementById('alert-screen').style.display = 'none';
+                showScreen('standby-screen');
             }
         } catch(e) { console.log('Sync Error'); }
     }
 
     function triggerAlert(job) {
-        if(document.getElementById('alert-screen').style.display === 'flex') return; // กันเด้งซ้ำ
-        
-        currentJobId = job.id;
+        if(document.getElementById('alert-screen').style.display === 'flex') return; 
         
         document.getElementById('a-cust').innerText = job.n;
-        document.getElementById('a-serv').innerText = `${job.t} (${job.d} นาที)`;
+        let tNames = { 'thai': 'นวดไทย', 'foot': 'นวดเท้า', 'back': 'รีดเส้น', 'oil': 'นวดน้ำมัน', 'spa': 'ขัดผิว', 'face': 'นวดหน้า', 'herb': 'อบสมุนไพร' };
+        document.getElementById('a-serv').innerText = `${tNames[job.t] || job.t} (${job.d} นาที)`;
         document.getElementById('a-time').innerText = job.time;
         document.getElementById('a-note').innerText = job.note || "-";
 
         document.getElementById('alert-screen').style.display = 'flex';
-
-        // 🚀 สั่งสั่นแบบหนักๆ และร้องเตือนทุก 2 วินาที จนกว่าจะกดรับ
         triggerFeedback();
         alertInterval = setInterval(triggerFeedback, 2000);
     }
 
     function triggerFeedback() {
         playAlertSound();
-        if(navigator.vibrate) {
-            navigator.vibrate([500, 200, 500, 200, 500]); // สั่นเป็นจังหวะ
-        }
+        if(navigator.vibrate) navigator.vibrate([500, 200, 500, 200, 500]);
     }
 
     async function acknowledgeJob() {
-        // หยุดเสียงหยุดสั่น
         clearInterval(alertInterval);
         if(navigator.vibrate) navigator.vibrate(0);
-        
         document.getElementById('alert-screen').style.display = 'none';
 
-        // 🚀 ส่งข้อมูลกลับไปบอก Server ว่า "รับทราบแล้วนะ"
-        try {
-            await fetch(SCRIPT_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: 'UPDATE_ACK', id: currentJobId })
-            });
-        } catch(e) { console.error("Ack Error", e); }
+        // ส่งข้อมูลบอกระบบว่ารับทราบแล้วนะ
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'UPDATE_ACK', id: currentJobId })
+        });
         
-        currentJobId = null;
+        // เด้งไปหน้ากำลังนวดทันที (หลอกตาให้เร็วขึ้น)
+        pollData(); 
+    }
+
+    // 🚀 [ใหม่] พนักงานกดจบงานเอง
+    function finishJob() {
+        if(!confirm("ยืนยันว่านวดเสร็จเรียบร้อยแล้วใช่หรือไม่? (คุณจะกลับสู่สถานะว่างรับงาน)")) return;
+        
+        showScreen('standby-screen'); // เด้งกลับหน้าว่างทันที
+        
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'FINISH_JOB', id: currentJobId })
+        });
+    }
+
+    // 🚀 [ใหม่] พนักงานเรียกแอดมิน (ส่งเข้า Sheet & Discord)
+    function callAdmin() {
+        if(!confirm("ต้องการเรียกแอดมินมาที่ห้องนวดใช่หรือไม่?")) return;
+
+        let timeStr = new Date().toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'});
+        
+        // ส่งให้หน้าเว็บแอดมินเด้ง
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'CALL_ADMIN', dr: myName, timeStr: timeStr })
+        });
+
+        // ส่งเข้า Discord เผื่อแอดมินเล่นมือถืออยู่
+        const payload = {
+            embeds: [{
+                title: "🆘 มีพนักงานเรียกความช่วยเหลือด่วน!",
+                color: 16711680, // สีแดง
+                fields: [
+                    { name: "พนักงานที่เรียก", value: myName, inline: true },
+                    { name: "เวลาที่เรียก", value: timeStr, inline: true }
+                ]
+            }]
+        };
+        fetch(DISCORD_WEBHOOK, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+        });
+
+        alert("ส่งการแจ้งเตือนเรียกแอดมินแล้ว โปรดรอสักครู่!");
+    }
+
+    // 🚀 [ใหม่] ดูประวัติงานของตัวเอง (คำนวณสดๆ)
+    function showMyWork() {
+        let myDoneJobs = localQs.filter(q => q.dr === myName && q.status === 'done');
+        let totalCust = myDoneJobs.length;
+        let totalMins = 0;
+        let totalComm = 0;
+
+        let tNames = { 'thai': 'นวดไทย', 'foot': 'นวดเท้า', 'back': 'รีดเส้น', 'oil': 'นวดน้ำมัน', 'spa': 'ขัดผิว', 'face': 'นวดหน้า', 'herb': 'อบสมุนไพร' };
+
+        let html = `<p style="text-align:center; font-size:18px; font-weight:bold;">สรุปยอดของ: ${myName}</p><hr>`;
+
+        if(totalCust === 0) {
+            html += `<p style="text-align:center; color:var(--text-muted);">ยังไม่มีงานที่เสร็จสิ้นในวันนี้</p>`;
+        } else {
+            myDoneJobs.forEach(q => {
+                totalMins += parseInt(q.d);
+                // จำลองสูตรคำนวณมือหมอแบบคร่าวๆ ให้ดู
+                let c = 0;
+                if(q.pm === 'course' || (q.note && q.note.includes("คอร์ส"))) {
+                    c = (q.note && q.note.includes("รีดเส้น")) ? 300 : 200;
+                } else if(q.t === 'thai') c = (q.d / 60) * 100;
+                else if(q.t === 'herb') c = 50;
+                else c = q.p / 2;
+                
+                totalComm += c;
+
+                html += `<div style="background:#f9f9f9; padding:8px; border-radius:8px; margin-bottom:8px;">
+                            <strong>คุณ ${q.n}</strong> - ${tNames[q.t]||q.t} (${q.d} น.)<br>
+                            <small style="color:var(--gold-dark);">ค่ามือประมาณ: ${c} ฿</small>
+                         </div>`;
+            });
+            html += `<hr>
+                     <p><strong>รวมลูกค้า:</strong> ${totalCust} คน</p>
+                     <p><strong>รวมเวลา:</strong> ${Math.floor(totalMins/60)} ชม. ${totalMins%60} น.</p>
+                     <p style="font-size:18px; color:var(--success);"><strong>ยอดเงินประเมิน: ${totalComm} ฿</strong></p>`;
+        }
+
+        document.getElementById('work-log-content').innerHTML = html;
+        document.getElementById('my-work-modal').style.display = 'flex';
     }
 </script>
 </body>

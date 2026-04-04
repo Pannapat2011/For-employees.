@@ -47,8 +47,30 @@
         .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); display: none; align-items: center; justify-content: center; z-index: 10000; backdrop-filter: blur(10px); }
         .modal-content { background: white; padding: 24px; border-radius: var(--radius-card); width: 90%; max-width: 350px; max-height: 80vh; overflow-y: auto; text-align: center; }
 
-        /* 🚨 ป้ายเตือนเน็ตหลุด */
         #offline-banner { display: none; position: fixed; top: 0; left: 0; width: 100%; background: var(--danger); color: white; padding: 12px; text-align: center; font-weight: bold; z-index: 10050; font-size: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+
+        /* 🚀 สไตล์สำหรับปุ่ม Emoji ประเมินลูกค้า */
+        .emoji-chip { 
+            font-size: 40px; 
+            padding: 10px; 
+            background: #F2F4F7; 
+            border-radius: 16px; 
+            cursor: pointer; 
+            flex: 1; 
+            transition: 0.2s; 
+            border: 3px solid transparent; 
+            text-align: center;
+            filter: grayscale(100%);
+            opacity: 0.4;
+            user-select: none;
+        }
+        .emoji-chip.active { 
+            filter: grayscale(0%);
+            opacity: 1;
+            background: rgba(212, 175, 55, 0.15); 
+            border-color: var(--gold-primary); 
+            transform: scale(1.15); 
+        }
     </style>
 </head>
 <body>
@@ -131,8 +153,20 @@
 <div id="finish-modal" class="modal-overlay">
     <div class="modal-content">
         <h2 style="margin-top: 0; color: var(--success);">✅ สรุปการให้บริการ</h2>
-        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">(เลือกพิมพ์) บันทึกความชอบลูกค้าเพื่อใช้บริการครั้งหน้า</p>
-        <textarea id="dr-note" class="form-control" rows="3" placeholder="เช่น ลูกค้าชอบนวดบ่าหนักๆ, ลูกค้าแพ้ยาหม่อง..." style="resize:none; text-align:left;"></textarea>
+        
+        <label style="font-size: 14px; font-weight: bold; color: var(--text-main); display:block; text-align:left; margin-bottom:8px;">ประเมินลูกค้า (กดเลือกหน้ายิ้ม)</label>
+        
+        <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+            <div class="emoji-chip active" onclick="selectEmojiTag(this, '👤 ปกติ')">🙂</div>
+            <div class="emoji-chip" onclick="selectEmojiTag(this, '🌟 VIP')">🤩</div>
+            <div class="emoji-chip" onclick="selectEmojiTag(this, '⚠️ ระวัง')">😓</div>
+            <div class="emoji-chip" onclick="selectEmojiTag(this, '🚫 แบล็กลิสต์')">😡</div>
+        </div>
+        <input type="hidden" id="dr-cust-tag" value="👤 ปกติ">
+
+        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 8px; text-align:left;">บันทึกเพิ่มเติม (เลือกพิมพ์)</p>
+        <textarea id="dr-note" class="form-control" rows="2" placeholder="เช่น นวดแรง, แพ้ยาหม่อง..." style="resize:none; text-align:left;"></textarea>
+        
         <button class="btn btn-success" style="margin-bottom: 8px;" onclick="confirmFinishJob()">ส่งข้อมูลและจบงาน</button>
         <button class="btn btn-outline" onclick="document.getElementById('finish-modal').style.display='none'">ยกเลิก</button>
     </div>
@@ -150,7 +184,6 @@
     let currentJobId = null;
     let localQs = []; 
 
-    // 🚀 เช็คเน็ตหลุด
     window.addEventListener('offline', () => document.getElementById('offline-banner').style.display = 'block');
     window.addEventListener('online', () => document.getElementById('offline-banner').style.display = 'none');
 
@@ -224,7 +257,6 @@
             let data = await res.json();
             localQs = data.qs || []; 
 
-            // เช็คว่าพักเบรกอยู่หรือเปล่า
             let me = data.drs.find(d => d.n === myName);
             if(me && me.st === 'break') {
                 showScreen('break-screen');
@@ -246,7 +278,6 @@
                     document.getElementById('act-note').innerText = myJob.note || "-";
                     showScreen('active-job-screen');
                     
-                    // 🚀 เริ่มนับถอยหลังเวลาทำงาน
                     startCountdown(myJob.startTime, myJob.d);
                 }
             } else {
@@ -257,10 +288,8 @@
         } catch(e) { console.log('Sync Error'); }
     }
 
-    // 🚀 ฟังก์ชันนับถอยหลัง
     function startCountdown(startTime, durationMins) {
         if(countdownInterval) clearInterval(countdownInterval);
-        
         let endTime = startTime + (durationMins * 60000);
         
         countdownInterval = setInterval(() => {
@@ -275,7 +304,7 @@
                 let m = Math.floor(timeLeft / 60000);
                 let s = Math.floor((timeLeft % 60000) / 1000);
                 timerEl.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-                timerEl.style.color = (m < 5) ? "var(--danger)" : "var(--success)"; // เตือน 5 นาทีสุดท้าย
+                timerEl.style.color = (m < 5) ? "var(--danger)" : "var(--success)"; 
             }
         }, 1000);
     }
@@ -312,11 +341,9 @@
             method: 'POST',
             body: JSON.stringify({ action: 'UPDATE_ACK', id: currentJobId })
         });
-        
         pollData(); 
     }
 
-    // 🚀 ระบบพักเบรก
     function takeBreak() {
         if(!confirm("ต้องการพักเบรกใช่หรือไม่? แอดมินจะไม่สามารถลงคิวให้คุณได้")) return;
         showScreen('break-screen');
@@ -335,14 +362,28 @@
         alert("กลับมารับงานแล้ว!");
     }
 
-    // 🚀 ระบบเปิด Modal ให้จดโน้ตลูกค้า
+    // 🚀 ระบบเลือก Emoji Tag แทน Dropdown
+    function selectEmojiTag(el, tagValue) {
+        document.querySelectorAll('.emoji-chip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById('dr-cust-tag').value = tagValue;
+    }
+
     function openFinishModal() {
         document.getElementById('dr-note').value = "";
+        
+        // เซ็ตให้หน้ายิ้ม "ปกติ" เป็นค่าเริ่มต้นเสมอ
+        document.getElementById('dr-cust-tag').value = "👤 ปกติ";
+        let chips = document.querySelectorAll('.emoji-chip');
+        chips.forEach(c => c.classList.remove('active'));
+        chips[0].classList.add('active'); 
+        
         document.getElementById('finish-modal').style.display = 'flex';
     }
 
     function confirmFinishJob() {
         let noteTxt = document.getElementById('dr-note').value.trim();
+        let tagVal = document.getElementById('dr-cust-tag').value; // ดึงค่าจากช่องที่แอบซ่อนไว้
         
         document.getElementById('finish-modal').style.display = 'none';
         showScreen('standby-screen'); 
@@ -350,13 +391,12 @@
         
         fetch(SCRIPT_URL, {
             method: 'POST',
-            body: JSON.stringify({ action: 'FINISH_JOB', id: currentJobId, note: noteTxt })
+            body: JSON.stringify({ action: 'FINISH_JOB', id: currentJobId, note: noteTxt, tag: tagVal })
         });
     }
 
     function callAdmin() {
         if(!confirm("ต้องการเรียกแอดมินมาที่ห้องนวดใช่หรือไม่?")) return;
-
         let timeStr = new Date().toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'});
         
         fetch(SCRIPT_URL, {
@@ -374,10 +414,7 @@
                 ]
             }]
         };
-        fetch(DISCORD_WEBHOOK, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
-        });
-
+        fetch(DISCORD_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
         alert("ส่งการแจ้งเตือนเรียกแอดมินแล้ว โปรดรอสักครู่!");
     }
 
@@ -389,7 +426,8 @@
 
         let tNames = { 'thai': 'นวดไทย', 'foot': 'นวดเท้า', 'back': 'รีดเส้น', 'oil': 'นวดน้ำมัน', 'spa': 'ขัดผิว', 'face': 'นวดหน้า', 'herb': 'อบสมุนไพร' };
 
-        let html = "";
+        let html = `<p style="text-align:center; font-size:18px; font-weight:bold;">สรุปยอดของ: ${myName}</p><hr>`;
+
         if(totalCust === 0) {
             html += `<p style="text-align:center; color:var(--text-muted);">ยังไม่มีงานที่เสร็จสิ้นในวันนี้</p>`;
         } else {
@@ -401,7 +439,6 @@
                 } else if(q.t === 'thai') c = (q.d / 60) * 100;
                 else if(q.t === 'herb') c = 50;
                 else c = q.p / 2;
-                
                 totalComm += c;
 
                 html += `<div style="background:#f9f9f9; padding:8px; border-radius:8px; margin-bottom:8px;">

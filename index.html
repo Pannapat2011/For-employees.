@@ -225,17 +225,57 @@ textarea:focus{border-color:var(--gold)}
 .rm-tap span{display:block;font-size:3.4vmin;color:#BDAF95;margin-top:1.4vmin}
 .rm-net{position:fixed;left:0;right:0;bottom:0;background:#FF6B5E;color:#fff;text-align:center;padding:1.4vmin;font-size:2.6vmin;font-weight:600;z-index:7}
 @media (orientation:portrait){.rm-body{display:block}.rm-col+.rm-col{margin:3vmin 0 0}.rm{overflow-y:auto}}
+/* ---------- smart ---------- */
+.hb{margin-left:8px;width:34px;height:34px;border-radius:11px;background:var(--card2);border:1px solid var(--line);font-size:15px;vertical-align:middle}
+.banners{position:fixed;left:0;right:0;bottom:0;z-index:150;display:flex;flex-direction:column}
+.bn{padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:var(--bad);color:#fff;font-size:13.5px;font-weight:600;text-align:center}
+.bn.info{background:#2E5DB0}
+.brief{margin-top:12px;padding:12px 14px;border-radius:14px;background:rgba(122,168,255,.1);border:1px solid rgba(122,168,255,.22);font-size:14px;color:var(--ink2);text-align:left}
+.brief b{color:var(--info)}
+.brief-n{margin-top:6px;color:#FFD9A0}
+.jcomm{margin-top:10px;font-size:14px;color:var(--muted)}.jcomm b{color:var(--gold2);font-size:16px}
+.prepbox{margin:0 0 14px;padding:14px;border-radius:20px;background:rgba(122,168,255,.08);border:1px solid rgba(122,168,255,.2)}
+.prep-h{font-weight:600;color:var(--info);margin-bottom:8px}
+.pi{display:flex;align-items:center;gap:10px;width:100%;padding:10px 4px;font-size:15px;color:var(--ink);text-align:left;border-bottom:1px solid rgba(122,168,255,.12)}
+.pi:last-child{border:0}
+.pi span{width:24px;height:24px;border-radius:8px;border:2px solid rgba(122,168,255,.5);display:grid;place-items:center;font-size:14px;color:#05200F;flex-shrink:0}
+.pi.on{color:var(--muted);text-decoration:line-through}.pi.on span{background:var(--ok);border-color:var(--ok)}
+.goal{display:flex;align-items:center;gap:14px;width:100%;padding:12px 16px;margin-bottom:10px;text-align:left}
+.goal svg{width:54px;height:54px;transform:rotate(-90deg);flex-shrink:0}
+.g-t{fill:none;stroke:rgba(255,244,222,.08);stroke-width:7}.g-p{fill:none;stroke:var(--gold);stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset .8s}
+.goal b{display:block;font-size:22px;color:var(--gold2);line-height:1.1}.goal span{font-size:13.5px;color:var(--ink2)}
+.reqs{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.req{justify-content:flex-start;gap:12px}.req span{font-size:20px}
+.a-esc{color:#FFB4A8;font-weight:600;min-height:22px;margin:0 0 10px}
+.alert.urgent{animation:in .35s var(--ease),urg .6s infinite alternate}
+@keyframes urg{to{background:radial-gradient(120% 80% at 50% 20%,#8A2A12 0%,#2A0E06 60%,#0B0804 100%)}}
+.chip.learned{border-color:var(--line2);color:var(--gold2)}
+.week{margin:14px 0 6px}
+.wk-bars{display:flex;align-items:flex-end;gap:8px;height:110px;padding:0 4px}
+.wk{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px}
+.wk i{width:100%;border-radius:8px 8px 4px 4px;background:rgba(232,198,110,.35)}.wk i.best{background:linear-gradient(180deg,#F3D489,#B8892B)}
+.wk span{font-size:12px;color:var(--muted)}
+.wk-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;text-align:center}
+.wk-sum b{display:block;font-size:18px;color:var(--gold2)}.wk-sum span{font-size:12px;color:var(--muted)}
+.inp{width:100%;height:52px;border-radius:14px;border:1.5px solid var(--line);background:rgba(0,0,0,.25);padding:0 14px;font-size:20px;outline:none}
+.srow{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.srow b{display:block;font-weight:600}.srow small{color:var(--muted);font-size:13px}
+.sw{appearance:none;-webkit-appearance:none;width:52px;height:30px;border-radius:30px;background:rgba(255,244,222,.15);position:relative;flex-shrink:0;transition:.25s;margin:0}
+.sw::before{content:'';position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:.25s}
+.sw:checked{background:var(--ok)}.sw:checked::before{left:25px}
+body.big .app,body.big .panel,body.big .alert{zoom:1.15}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
 </style>
 </head>
 <body>
 <div class="offline" id="offline" hidden>⚠️ อินเทอร์เน็ตขาดหาย — กำลังเชื่อมต่อใหม่ อาจพลาดแจ้งเตือนคิว</div>
 <div class="toasts" id="toasts"></div>
+<div class="banners"><div class="bn" id="bat" hidden></div><div class="bn" id="stale" hidden></div><div class="bn info" id="outbox" hidden></div></div>
 
 <div class="app">
   <header class="top">
     <div class="brand"><div class="mark">✦</div><div><b id="shop">บ้านประคบทอง</b><small>STAFF PAGER</small></div></div>
-    <div class="clock num"><span class="sync" id="sync"></span><span id="clock">--:--</span></div>
+    <div class="clock num"><span class="sync" id="sync"></span><span id="clock">--:--</span><button class="hb" data-act="settings" aria-label="ตั้งค่า">⚙️</button></div>
   </header>
 
   <!-- boot -->
@@ -289,14 +329,16 @@ textarea:focus{border-color:var(--gold)}
         <div class="card stat"><b class="num" id="st-hours">0</b><span>ชั่วโมง</span></div>
         <div class="card stat"><b class="num" id="st-comm">฿0</b><span>ค่ามือ</span></div>
       </div>
-      <div id="next-bk"></div>
+      <div id="goal" style="width:100%"></div>
+      <div id="next-bk" style="width:100%"></div>
     </div>
     <div class="actions">
       <div class="row">
         <button class="btn btn-ghost btn-sm" data-act="break">☕ พักเบรก</button>
         <button class="btn btn-ghost btn-sm" data-act="history">📊 งานของฉัน</button>
       </div>
-      <button class="btn btn-bad btn-sm" data-act="call">🆘 เรียกแอดมิน</button>
+      <button class="btn btn-bad btn-sm" data-act="call">📨 ส่งคำขอถึงแอดมิน</button>
+      <button class="link" data-act="endShift">🏁 เลิกงานวันนี้</button>
     </div>
   </section>
 
@@ -324,10 +366,16 @@ textarea:focus{border-color:var(--gold)}
     <div class="card job">
       <div class="job-h"><div class="av" id="j-av">ค</div><div><b id="j-cust"></b><span id="j-serv"></span></div></div>
       <div id="j-note"></div>
+      <div id="j-brief"></div>
+      <div id="j-comm"></div>
+      <div id="j-ext"></div>
+    </div>
+    <div id="j-prep"></div>
+    <div style="display:none">
     </div>
     <div class="actions">
       <button class="btn btn-ok btn-xl" data-act="finish">✓ นวดเสร็จแล้ว</button>
-      <button class="btn btn-bad btn-sm" data-act="call">🆘 เรียกแอดมินด่วน</button>
+      <button class="btn btn-bad btn-sm" data-act="call">📨 ส่งคำขอถึงแอดมิน</button>
     </div>
   </section>
 </div>
@@ -342,7 +390,9 @@ textarea:focus{border-color:var(--gold)}
     <div class="kv"><span>บริการ</span><b id="a-serv"></b></div>
     <div class="kv"><span>เริ่มนวด</span><b class="num" id="a-time"></b></div>
     <div class="kv" id="a-note-row"><span>หมายเหตุ</span><b id="a-note" style="color:var(--warn)"></b></div>
+    <div id="a-brief"></div>
   </div>
+  <p class="a-esc" id="a-esc"></p>
   <button class="btn btn-gold btn-xl" data-act="ack">✓ รับทราบงาน</button>
 </div>
 
@@ -359,13 +409,7 @@ textarea:focus{border-color:var(--gold)}
     <button class="mood" data-act="mood" data-v="⛔ แบล็กลิสต์"><em>😡</em>แบล็กลิสต์</button>
   </div>
   <div class="field-l">บันทึกถึงคนต่อไป (ไม่บังคับ)</div>
-  <div class="chips">
-    <button class="chip" data-act="qn" data-v="ชอบนวดหนัก">+ ชอบนวดหนัก</button>
-    <button class="chip" data-act="qn" data-v="ชอบนวดเบา">+ ชอบนวดเบา</button>
-    <button class="chip" data-act="qn" data-v="ปวดคอบ่าไหล่">+ ปวดคอบ่าไหล่</button>
-    <button class="chip" data-act="qn" data-v="ปวดหลัง">+ ปวดหลัง</button>
-    <button class="chip" data-act="qn" data-v="แพ้ยาหม่อง">+ แพ้ยาหม่อง</button>
-  </div>
+  <div class="chips" id="f-chips"></div>
   <textarea id="f-note" placeholder="พิมพ์เพิ่มเติม…"></textarea>
   <div class="actions" style="margin-top:18px">
     <button class="btn btn-ok btn-xl" data-act="confirmFinish">ส่งข้อมูลและจบงาน</button>
@@ -378,10 +422,32 @@ textarea:focus{border-color:var(--gold)}
   <div class="grab"></div>
   <h2>งานของฉันวันนี้</h2>
   <p class="sub" id="h-sub"></p>
+  <div id="h-week"></div>
   <div class="hist" id="hist"></div>
   <div id="h-total"></div>
   <p class="muted" style="font-size:12.5px;text-align:center;margin:12px 0 4px">ค่ามือเป็นยอดประมาณ ยอดจริงดูได้จากแอดมิน</p>
   <button class="btn btn-ghost btn-sm" data-act="close" style="margin-top:10px">ปิด</button>
+</div></div>
+
+<!-- requests -->
+<div class="sheet" id="sh-req" hidden><div class="panel">
+  <div class="grab"></div>
+  <h2>ส่งคำขอถึงแอดมิน</h2>
+  <p class="sub">แอดมินจะได้ยินเสียงเตือนพร้อมข้อความทันที</p>
+  <div class="reqs" id="reqs"></div>
+  <button class="btn btn-ghost btn-sm" data-act="close" style="margin-top:12px">ยกเลิก</button>
+</div></div>
+
+<!-- settings -->
+<div class="sheet" id="sh-set" hidden><div class="panel">
+  <div class="grab"></div>
+  <h2>ตั้งค่าของฉัน</h2>
+  <div class="field-l">เป้าค่ามือวันนี้ (บาท)</div>
+  <input id="set-goal" class="inp num" type="number" inputmode="numeric" min="0" step="100">
+  <div class="srow"><div><b>ตัวหนังสือใหญ่</b><small>อ่านง่ายขึ้น</small></div><input type="checkbox" class="sw" id="set-big"></div>
+  <div class="srow"><div><b>อ่านออกเสียงคิวใหม่</b><small>พูดชื่อลูกค้าและบริการให้ฟัง</small></div><input type="checkbox" class="sw" id="set-tts"></div>
+  <div class="srow"><div><b>แจ้งเตือนของระบบ</b><small>เด้งแจ้งเตือนเมื่อเปิดแอปอื่นอยู่ (ถ้าเครื่องรองรับ)</small></div><input type="checkbox" class="sw" id="set-notify"></div>
+  <button class="btn btn-gold btn-sm" data-act="saveSet" style="margin-top:16px">บันทึก</button>
 </div></div>
 
 <!-- confirm dialog -->
@@ -636,8 +702,9 @@ async function keepAwake() { try { if ('wakeLock' in navigator && !wake) { wake 
 async function post(action, data = {}) {
   const res = await fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action, ...data }) });
   const txt = await res.text(); let j; try { j = JSON.parse(txt); } catch (e) { j = { ok: !/^ERROR/.test(txt) }; }
-  if (j.ok === false) throw new Error(j.msg || 'ทำรายการไม่สำเร็จ');
+  if (j.ok === false) { const e = new Error(j.msg || 'ทำรายการไม่สำเร็จ'); e.server = true; throw e; }
   if (j.qs) apply(j);
+  lastOk = Date.now();
   return j;
 }
 async function pull() {
@@ -645,7 +712,7 @@ async function pull() {
   try {
     const j = await (await fetch(SCRIPT_URL + '?type=light&t=' + Date.now())).json();
     if (j.ok === false) throw 0;
-    apply(j); net(true);
+    apply(j); net(true); lastOk = Date.now();
   } catch (e) { net(false); } finally { pulling = false; }
 }
 function net(ok) { $('#sync').classList.toggle('off', !ok); $('#offline').hidden = ok; }
@@ -662,7 +729,7 @@ function apply(j) {
 function mine() { return (D?.qs || []).filter(q => q.dr === me); }
 function myStatus() { return (D?.drs || []).find(d => d.n === me)?.st || 'free'; }
 function route() {
-  const active = mine().find(q => q.status === 'active');
+  const active = mine().find(q => q.status === 'active' && !ackSent.has('done' + q.id));
   if (active) {
     job = active;
     if (!active.staffAck && !ackSent.has(String(active.id))) return startAlarm(active);
@@ -700,10 +767,12 @@ function renderStandby() {
   const mins = done.reduce((a, q) => a + (Number(q.d) || 0), 0);
   $('#st-jobs').textContent = done.length;
   $('#st-hours').textContent = (mins / 60).toFixed(mins % 60 ? 1 : 0);
-  $('#st-comm').textContent = baht(all.reduce((a, q) => a + commOf(q), 0));
+  const commAll = all.reduce((a, q) => a + commOf(q), 0);
+  $('#st-comm').textContent = baht(commAll);
+  snapshotToday(commAll, done.length, mins);
+  $('#goal').innerHTML = goalHTML(commAll);
   const d = new Date(now()), today = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`, hm = fmtT(now());
-  const nb = (D?.bk || []).filter(b => b.dr === me && b.date === today && b.time >= hm).sort((a, b) => a.time.localeCompare(b.time))[0];
-  $('#next-bk').innerHTML = nb ? `<div class="card next"><div class="t num">${esc(nb.time)}</div><div><b>นัดถัดไป · คุณ${esc(nb.n)}</b><small>${esc(TYPES[nb.t] || nb.t)} · ${nb.d} นาที</small></div></div>` : '';
+  $('#next-bk').innerHTML = myBookings().map((nb, i) => `<div class="card next"><div class="t num">${esc(nb.time)}</div><div><b>${i ? 'นัด' : 'นัดถัดไป'} · คุณ${esc(nb.n)}</b><small>${esc(TYPES[nb.t] || nb.t)} · ${nb.d} นาที · ลูกค้าขอคุณ</small></div></div>`).join('');
 }
 function tagHTML(n) {
   const t = (D?.ctags || {})[n]; if (!t || t.includes('ปกติ')) return '';
@@ -718,6 +787,10 @@ function renderJob() {
   const t = (D?.ctags || {})[q.n] || '';
   $('#j-note').innerHTML = (q.note ? `<div class="note"><b>📝</b><span>${esc(q.note)}</span></div>` : '')
     + (/แบล็ก|ระวัง|⛔|🚫/.test(t) ? `<div class="alertline">⚠️ ลูกค้ารายนี้มีประวัติ “${esc(t)}” — ถ้ามีปัญหากดเรียกแอดมินได้ทันที</div>` : '');
+  $('#j-brief').innerHTML = briefHTML(q.n); loadBrief(q.n);
+  $('#j-comm').innerHTML = jobCommHTML(q);
+  $('#j-prep').innerHTML = prepHTML(q);
+  $('#j-ext').innerHTML = extPrompt(q);
   tick();
 }
 function tick() {
@@ -740,10 +813,15 @@ function tick() {
     } else {
       const over = Math.floor(-left / 60000);
       $('#left').textContent = 'หมดเวลา'; $('#left-l').textContent = over ? `เกินมา ${over} นาที` : 'ครบเวลาแล้ว'; $('#prog').style.strokeDashoffset = C;
-      if (!job._buzzed) { job._buzzed = true; chime(false); navigator.vibrate?.([300, 150, 300]); }
+
     }
     $('#end').textContent = 'ครบเวลา ' + fmtT(end);
+    milestones(job);
+    if (now() % 15000 < 1000) { $('#j-prep').innerHTML = prepHTML(job); $('#j-ext').innerHTML = extPrompt(job); }
   }
+  if (!$('#s-break').hidden) breakNudge();
+  if (!$('#s-standby').hidden) bookingReminders();
+  watchdog(); escalate();
   if (!$('#s-break').hidden) {
     const at = Number(localStorage.getItem(LS.brk)) || now(), sec = Math.max(0, Math.floor((now() - at) / 1000));
     $('#break-time').textContent = `${pad(Math.floor(sec / 60))}:${pad(sec % 60)}`;
@@ -758,30 +836,222 @@ function startAlarm(q) {
   $('#a-serv').textContent = `${TYPES[q.t] || q.t} · ${q.d} นาที`;
   $('#a-time').textContent = (q.time || '') + (q.req ? ' · ลูกค้าขอตัว' : '');
   $('#a-note').textContent = q.note || ''; $('#a-note-row').hidden = !q.note;
+  $('#a-brief').innerHTML = briefHTML(q.n); loadBrief(q.n);
   if (!$('#alert').hidden) return;
-  $('#alert').hidden = false;
+  $('#alert').hidden = false; alarmAt = Date.now(); $('#alert').classList.remove('urgent'); $('#a-esc').textContent = '';
   const ring = () => { chime(true); navigator.vibrate?.([500, 200, 500, 200, 500]); };
   ring(); alarmT = setInterval(ring, 2200);
+  setTimeout(() => say(`มีคิวใหม่ คุณ${cleanName(q.n)} ${TYPES[q.t] || ''} ${q.d} นาที`), 900);
+  bgAlert(q);
 }
-function stopAlarm() { clearInterval(alarmT); alarmT = null; navigator.vibrate?.(0); $('#alert').hidden = true; }
+function stopAlarm() { clearInterval(alarmT); alarmT = null; alarmAt = 0; navigator.vibrate?.(0); $('#alert').hidden = true; stopTitle(); try { speechSynthesis.cancel(); } catch (e) {} }
+
+/* ═════════════════════════════════════════════════════════════════
+   ผู้ช่วยอัจฉริยะ (หน้าพนักงาน) — 20 ฟังก์ชัน
+   ═════════════════════════════════════════════════════════════════ */
+const PREF = Object.assign({ big: false, tts: true, goal: 1000, notify: false }, (() => { try { return JSON.parse(localStorage.getItem('pager_pref')) || {}; } catch (e) { return {}; } })());
+const savePref = () => { try { localStorage.setItem('pager_pref', JSON.stringify(PREF)); } catch (e) {} };
+const fx = new Set(); const onceP = (k, fn) => { if (!fx.has(k)) { fx.add(k); fn(); } };
+const lsJ = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } };
+const lsS = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+const todayKey = () => { const d = new Date(now()); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
+
+/* ① ประวัติลูกค้า (มากี่ครั้ง ชอบอะไร หมอคนก่อนบันทึกอะไรไว้) */
+const BRIEF = {};
+async function loadBrief(name) {
+  const n = cleanName(name); if (!n || BRIEF[n]) return BRIEF[n];
+  BRIEF[n] = { loading: true };
+  try { BRIEF[n] = await (await fetch(`${SCRIPT_URL}?mode=cust&n=${encodeURIComponent(n)}&t=${Date.now()}`)).json(); } catch (e) { delete BRIEF[n]; }
+  if (job && cleanName(job.n) === n) { if (!$('#alert').hidden) $('#a-brief').innerHTML = briefHTML(n); else if (!$('#s-job').hidden) $('#j-brief').innerHTML = briefHTML(n); }
+  return BRIEF[n];
+}
+function briefHTML(name) {
+  const b = BRIEF[cleanName(name)];
+  if (!b || b.loading) return '<div class="brief muted">กำลังดูประวัติลูกค้า…</div>';
+  if (!b.visits) return '<div class="brief">🆕 <b>ลูกค้าใหม่</b> — มาครั้งแรก ดูแลให้ประทับใจนะ</div>';
+  const days = Math.max(0, Math.round((now() - b.last) / 86400000));
+  return `<div class="brief">🔁 <b>มาครั้งที่ ${b.visits + 1}</b> · ล่าสุด ${days ? days + ' วันก่อน' : 'วันนี้'}${b.favT ? ` · ชอบ${TYPES[b.favT] || b.favT} ${b.favD} นาที` : ''}${b.favDr ? ` · ประจำกับ${esc(b.favDr)}` : ''}${b.ext ? ` · เคยต่อเวลา ${b.ext} ครั้ง` : ''}
+    ${b.notes && b.notes.length ? `<div class="brief-n">📝 หมอคนก่อนบันทึก: ${b.notes.map(esc).join(' · ')}</div>` : ''}</div>`;
+}
+
+/* ② เช็คลิสต์เตรียมห้องตามบริการ */
+const PREP = {
+  thai: ['ปูผ้าปูเตียงใหม่', 'เตรียมชุดนวดไทยให้ลูกค้า', 'ผ้าเย็น/น้ำดื่ม'],
+  foot: ['เตรียมอ่างแช่เท้าน้ำอุ่น', 'ผ้าขนหนู 2 ผืน', 'ครีมนวดเท้า'],
+  back: ['ปูผ้าปูเตียงใหม่', 'เตรียมชุดนวด', 'ยาหม่อง/บาล์ม (ถามเรื่องแพ้ก่อน)'],
+  oil: ['อุ่นน้ำมันนวด', 'ผ้าคลุมตัว + ผ้าขนหนู', 'กางเกงใช้แล้วทิ้ง'],
+  spa: ['เตรียมสครับ', 'ผ้าคลุม + ผ้าขนหนู', 'เปิดน้ำอุ่นห้องอาบน้ำ'],
+  face: ['ล้างมือ/ผ้าคาดผม', 'โฟมล้างหน้า + สครับหน้า', 'ผ้าเย็นเช็ดหน้า'],
+  herb: ['อุ่นลูกประคบ/ตู้อบ', 'ผ้าขนหนู', 'น้ำดื่มสมุนไพร']
+};
+function prepHTML(q) {
+  if (q.startTime <= now()) return '';
+  const done = lsJ('prep_' + q.id, []), items = PREP[q.t] || PREP.thai;
+  return `<div class="prepbox"><div class="prep-h">🧺 เตรียมห้อง (${done.length}/${items.length})</div>${items.map((it, i) => `<button class="pi ${done.includes(i) ? 'on' : ''}" data-act="prepTick" data-i="${i}"><span>${done.includes(i) ? '✓' : ''}</span>${esc(it)}</button>`).join('')}</div>`;
+}
+
+/* ③ แจ้งเตือนระหว่างนวด (ครึ่งทาง / 10 นาที / 5 นาที / ครบเวลา) — สั่นต่างจังหวะกัน */
+function milestones(q) {
+  const total = q.d * 60000, left = q.startTime + total - now();
+  if (q.startTime > now()) return;
+  const id = q.id;
+  if (left <= total / 2 && left > total / 2 - 60000 && q.d >= 60 && (q.t === 'thai' || q.t === 'oil' || q.t === 'back'))
+    onceP(id + 'half', () => { chime(false); navigator.vibrate?.([200, 100, 200]); toast('⏳ ครึ่งทางแล้ว — ถึงเวลาพลิกตัวลูกค้า', 'ok'); });
+  if (left <= 10 * 60000 && left > 9 * 60000) onceP(id + 'm10', () => { navigator.vibrate?.([150]); toast('🕙 เหลือ 10 นาที — ถามลูกค้าว่าจะต่อเวลาไหม', ''); });
+  if (left <= 5 * 60000 && left > 4 * 60000) onceP(id + 'm5', () => { navigator.vibrate?.([150, 80, 150]); chime(false); });
+  if (left <= 0 && left > -60000) onceP(id + 'end', () => { chime(true); navigator.vibrate?.([400, 150, 400, 150, 400]); say('ครบเวลานวดแล้ว'); });
+}
+
+/* ④ ลูกค้าขอต่อเวลา · ⑤ ส่งคำขอถึงแอดมิน */
+const REQS = [['🆘', 'ด่วน! ขอแอดมินมาที่ห้อง', 'btn-bad'], ['⏱', 'ลูกค้าขอต่อเวลา +30 นาที'], ['⏱', 'ลูกค้าขอต่อเวลา +60 นาที'], ['💰', 'ลูกค้าพร้อมจ่ายเงินแล้ว'], ['🧺', 'ขอผ้า/อุปกรณ์เพิ่ม'], ['💧', 'ขอน้ำดื่มให้ลูกค้า'], ['🙋', 'ขอคุยกับแอดมิน']];
+function extPrompt(q) {
+  const left = q.startTime + q.d * 60000 - now();
+  return left > 0 && left <= 10 * 60000 ? `<button class="btn btn-ghost btn-sm" data-act="reqSend" data-m="ลูกค้าขอต่อเวลา +30 นาที" style="margin-top:12px">⏱ ลูกค้าขอต่อเวลา (แจ้งแอดมิน)</button>` : '';
+}
+async function sendReq(msg) {
+  const extra = job ? ` · คุณ${cleanName(job.n)}` : '';
+  await post('CALL_ADMIN', { dr: me, timeStr: fmtT(now()), msg: msg + extra });
+  toast('✓ ส่งถึงแอดมินแล้ว', 'ok');
+}
+
+/* ⑥ นัดของฉันวันนี้ + เตือนก่อน 15 นาที */
+function myBookings() {
+  const hm = fmtT(now());
+  return (D?.bk || []).filter(b => b.dr === me && b.date === todayKey()).sort((a, b) => a.time.localeCompare(b.time)).filter(b => b.time >= hm || toMin(hm) - toMin(b.time) < 30);
+}
+const toMin = s => { const [h, m] = String(s).split(':').map(Number); return h * 60 + (m || 0); };
+function bookingReminders() {
+  myBookings().forEach(b => {
+    const diff = toMin(b.time) - toMin(fmtT(now()));
+    if (diff <= 15 && diff >= 0) onceP('bk' + b.id, () => { chime(false); navigator.vibrate?.([300, 100, 300]); toast(`📅 อีก ${diff} นาที คุณ${b.n} นัดคุณไว้ (${TYPES[b.t] || b.t})`, 'ok'); });
+  });
+}
+
+/* ⑦ เตือนพักนาน */
+function breakNudge() {
+  const at = Number(localStorage.getItem(LS.brk)); if (!at) return;
+  const m = Math.floor((now() - at) / 60000);
+  if (m >= 15) onceP('brk15' + at, () => { navigator.vibrate?.(200); toast('☕ พักมา 15 นาทีแล้ว พร้อมแล้วกดกลับมารับงานนะ', ''); });
+  if (m >= 30) onceP('brk30' + at, () => { chime(false); navigator.vibrate?.([300, 100, 300]); toast('⏰ พักมา 30 นาทีแล้ว — ลูกค้าอาจรออยู่', 'bad'); });
+}
+
+/* ⑧ เป้าหมายรายวัน · ⑨⑩ สถิติ 7 วัน (เก็บในเครื่อง) */
+function snapshotToday(comm, jobs, mins) { const h = lsJ('pager_days_' + me, {}); h[todayKey()] = { comm, jobs, mins }; const keys = Object.keys(h).sort().slice(-60); const o = {}; keys.forEach(k => o[k] = h[k]); lsS('pager_days_' + me, o); }
+function goalHTML(comm) {
+  const g = Math.max(1, PREF.goal), pct = Math.min(100, comm / g * 100), C = 2 * Math.PI * 26;
+  const msg = pct >= 100 ? 'ถึงเป้าแล้ว เก่งมาก! 🎉' : pct >= 70 ? `อีก ${baht(g - comm)} ถึงเป้า สู้ๆ` : `เป้าวันนี้ ${baht(g)}`;
+  return `<button class="card goal" data-act="settings"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" class="g-t"/><circle cx="30" cy="30" r="26" class="g-p" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - pct / 100)}"/></svg><div><b class="num">${Math.round(pct)}%</b><span>${msg}</span></div></button>`;
+}
+function weekHTML() {
+  const h = lsJ('pager_days_' + me, {}), out = [];
+  for (let i = 6; i >= 0; i--) { const d = new Date(now() - i * 86400000), k = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; out.push({ k, l: d.toLocaleDateString('th-TH', { weekday: 'narrow' }), v: (h[k] || {}).comm || 0, j: (h[k] || {}).jobs || 0 }); }
+  const max = Math.max(1, ...out.map(o => o.v)), tot = out.reduce((a, o) => a + o.v, 0), best = out.reduce((a, b) => b.v > a.v ? b : a, out[0]);
+  return `<div class="week"><div class="wk-bars">${out.map(o => `<div class="wk"><i style="height:${Math.max(3, o.v / max * 100)}%" class="${o === best && o.v ? 'best' : ''}"></i><span>${o.l}</span></div>`).join('')}</div>
+    <div class="wk-sum"><div><b class="num">${baht(tot)}</b><span>รวม 7 วัน</span></div><div><b class="num">${best.v ? new Date(best.k).toLocaleDateString('th-TH', { weekday: 'short' }) : '-'}</b><span>วันที่ดีที่สุด</span></div><div><b class="num">${out.reduce((a, o) => a + o.j, 0)}</b><span>คิว</span></div></div></div>`;
+}
+
+/* ⑪ ส่งข้อมูลค้างไว้ตอนเน็ตหลุด แล้วส่งใหม่อัตโนมัติ */
+const OUTBOX_K = 'pager_outbox';
+function queueOut(action, data) { const ob = lsJ(OUTBOX_K, []); ob.push({ action, data, at: Date.now() }); lsS(OUTBOX_K, ob); updOutbox(); }
+async function flushOutbox() {
+  const ob = lsJ(OUTBOX_K, []); if (!ob.length || !navigator.onLine) return;
+  const left = [];
+  for (const it of ob) { try { await post(it.action, it.data); } catch (e) { if (!e.server) left.push(it); } }
+  lsS(OUTBOX_K, left); updOutbox();
+  if (!left.length) toast('✓ ส่งข้อมูลที่ค้างไว้เรียบร้อย', 'ok');
+}
+function updOutbox() { const n = lsJ(OUTBOX_K, []).length; $('#outbox').hidden = !n; $('#outbox').textContent = `📤 มีข้อมูลรอส่ง ${n} รายการ — จะส่งเองเมื่อเน็ตกลับมา`; }
+async function safePost(action, data) {
+  try { return await post(action, data); }
+  catch (e) { if (e.server) throw e; queueOut(action, data); toast('เน็ตหลุด — บันทึกไว้ในเครื่อง จะส่งให้เองอัตโนมัติ', ''); return null; }
+}
+
+/* ⑫ เตือนแบตใกล้หมด */
+async function watchBattery() {
+  try {
+    const b = await navigator.getBattery?.(); if (!b) return;
+    const chk = () => { const low = b.level <= 0.2 && !b.charging; $('#bat').hidden = !low; if (low) $('#bat').textContent = `🔋 แบตเหลือ ${Math.round(b.level * 100)}% — เสียบชาร์จ ไม่งั้นอาจพลาดคิว`; };
+    chk(); b.addEventListener('levelchange', chk); b.addEventListener('chargingchange', chk);
+  } catch (e) {}
+}
+
+/* ⑬ ตรวจว่าข้อมูลยังสดอยู่ไหม */
+let lastOk = Date.now();
+function watchdog() {
+  const sec = Math.floor((Date.now() - lastOk) / 1000);
+  $('#stale').hidden = sec < 30 || !started;
+  if (sec >= 30) { $('#stale').textContent = `⚠️ ไม่ได้อัปเดตคิวมา ${sec} วินาที — ตรวจอินเทอร์เน็ต`; if (sec % 10 === 0) pull(); }
+}
+
+/* ⑭ ตัวหนังสือใหญ่ · ⑮ อ่านออกเสียงคิวใหม่ */
+function applyPref() { document.body.classList.toggle('big', !!PREF.big); }
+function say(text) {
+  if (!PREF.tts || !window.speechSynthesis) return;
+  try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = 'th-TH'; u.rate = .9; const v = speechSynthesis.getVoices().find(v => /^th/i.test(v.lang)); if (v) u.voice = v; speechSynthesis.speak(u); } catch (e) {}
+}
+
+/* ⑯ ยังไม่รับทราบนาน → เตือนแรงขึ้น */
+let alarmAt = 0;
+function escalate() {
+  if ($('#alert').hidden || !alarmAt) return;
+  const s = Math.floor((Date.now() - alarmAt) / 1000);
+  $('#a-esc').textContent = s >= 20 ? `ยังไม่รับทราบ ${s} วินาที${s >= 120 ? ' — แอดมินอาจย้ายคิวให้คนอื่น' : ''}` : '';
+  if (s === 45) { clearInterval(alarmT); alarmT = setInterval(() => { chime(true); navigator.vibrate?.([800, 150, 800]); }, 1200); $('#alert').classList.add('urgent'); }
+}
+
+/* ⑰ เลิกงาน: สรุปวันนี้ + เช็คเอาท์ */
+async function endShift() {
+  const done = doneJobs(), all = mine().filter(q => q.status === 'done'), comm = all.reduce((a, q) => a + commOf(q), 0), mins = done.reduce((a, q) => a + (+q.d || 0), 0);
+  if (!await ask('🏁', 'เลิกงานวันนี้?', `วันนี้คุณทำ ${done.length} คิว · ${Math.floor(mins / 60)} ชม. ${mins % 60} นาที\nค่ามือประมาณ ${baht(comm)}\n\nเลิกงานแล้วจะออกจากคิวรับลูกค้า`, 'เลิกงาน')) return;
+  await post('CHECKOUT', { dr: me });
+  toast(`ขอบคุณที่ตั้งใจทำงานวันนี้ 🙏 กลับบ้านปลอดภัยนะ`, 'ok'); route();
+}
+
+/* ⑱ ค่ามือของงานที่ทำอยู่ (แสดงในการ์ดงาน) */
+const jobCommHTML = q => `<div class="jcomm">💵 งานนี้ได้ประมาณ <b class="num">${baht(commOf(q))}</b></div>`;
+
+/* ⑲ โน้ตสำเร็จรูปที่เรียนรู้จากการใช้งาน */
+const BASE_NOTES = ['ชอบนวดหนัก', 'ชอบนวดเบา', 'ปวดคอบ่าไหล่', 'ปวดหลัง', 'แพ้ยาหม่อง'];
+function learnNotes(text) {
+  const c = lsJ('pager_notes', {});
+  String(text || '').split(/[,،\n]/).map(s => s.trim()).filter(s => s && s.length <= 30).forEach(s => c[s] = (c[s] || 0) + 1);
+  lsS('pager_notes', c);
+}
+function noteChips() {
+  const c = lsJ('pager_notes', {}), all = [...new Set([...Object.keys(c).sort((a, b) => c[b] - c[a]), ...BASE_NOTES])].slice(0, 8);
+  return all.map(v => `<button class="chip ${c[v] ? 'learned' : ''}" data-act="qn" data-v="${esc(v)}">+ ${esc(v)}</button>`).join('');
+}
+
+/* ⑳ เปิดแอปอื่นอยู่ก็ยังรู้: ดึงคิวต่อในพื้นหลัง + กระพริบชื่อแท็บ + แจ้งเตือนระบบ */
+let titleT = null;
+function bgAlert(q) {
+  if (!document.hidden) return;
+  clearInterval(titleT); let f = false;
+  titleT = setInterval(() => { document.title = (f = !f) ? '🔔 มีคิวใหม่!' : 'Staff Pager'; }, 900);
+  if (PREF.notify && 'Notification' in window && Notification.permission === 'granted') {
+    try { navigator.serviceWorker?.ready.then(r => r.showNotification('มีคิวใหม่!', { body: `คุณ${cleanName(q.n)} · ${TYPES[q.t] || q.t} ${q.d} นาที`, vibrate: [500, 200, 500], tag: 'job' })).catch(() => {}); new Notification('มีคิวใหม่!', { body: `คุณ${cleanName(q.n)} · ${TYPES[q.t] || q.t}` }); } catch (e) {}
+  }
+}
+function stopTitle() { clearInterval(titleT); titleT = null; document.title = 'Staff Pager · บ้านประคบทอง'; }
 
 /* ---------- actions ---------- */
 function logout() { localStorage.removeItem(LS.name); me = ''; started = false; clearInterval(pollT); stopAlarm(); renderLogin(); startPoll(); }
-function startPoll() { clearInterval(pollT); pollT = setInterval(() => { if (!document.hidden) pull(); }, POLL_MS); }
+let bgTick = 0;
+function startPoll() { clearInterval(pollT); pollT = setInterval(() => { if (!document.hidden || ++bgTick % 3 === 0) pull(); if (lsJ(OUTBOX_K, []).length) flushOutbox(); }, POLL_MS); }
 const A = {
   pick: ({ n }) => { me = n; localStorage.setItem(LS.name, n); $('#start-name').textContent = n; show('start'); },
   logout: () => logout(),
-  start: () => { ctx(); chime(false); navigator.vibrate?.(120); keepAwake(); started = true; route(); pull(); },
+  start: () => { ctx(); chime(false); navigator.vibrate?.(120); keepAwake(); started = true; route(); pull(); watchBattery(); updOutbox(); try { speechSynthesis.getVoices(); } catch (e) {} },
   checkin: (_, btn) => busy(btn, async () => {
     const j = await post('CHECKIN', { dr: me });
     toast(j.out?.already ? 'เช็คชื่อแล้ว ' + (j.out.time || '') : '✓ เช็คชื่อแล้ว ' + (j.out?.time || ''), 'ok'); route();
   }),
   ack: (_, btn) => {
     const id = String(job.id); ackSent.add(id); stopAlarm(); renderJob(); show('job');
-    post('UPDATE_ACK', { id, dr: me }).catch(() => { ackSent.delete(id); toast('ส่งรับทราบไม่สำเร็จ ลองใหม่', 'bad'); });
+    safePost('UPDATE_ACK', { id, dr: me }).catch(e => toast(e.message, 'bad'));
   },
   finish: () => {
-    tag = '👤 ปกติ'; $('#f-note').value = '';
+    tag = '👤 ปกติ'; $('#f-note').value = ''; $('#f-chips').innerHTML = noteChips();
     document.querySelectorAll('.mood').forEach(m => m.classList.toggle('on', m.dataset.v === tag));
     $('#f-cust').textContent = 'คุณ' + cleanName(job.n) + ' · ' + (TYPES[job.t] || job.t);
     open('sh-finish');
@@ -789,22 +1059,32 @@ const A = {
   mood: ({ v }, el) => { tag = v; document.querySelectorAll('.mood').forEach(m => m.classList.toggle('on', m === el)); },
   qn: ({ v }) => { const t = $('#f-note'); t.value = t.value.trim() ? t.value.trim() + ', ' + v : v; },
   confirmFinish: (_, btn) => busy(btn, async () => {
-    await post('FINISH_JOB', { id: job.id, note: $('#f-note').value.trim(), tag });
-    close('sh-finish'); job = null; toast('✓ จบงานเรียบร้อย เก่งมาก!', 'ok'); route(); pull();
+    const note = $('#f-note').value.trim(); learnNotes(note);
+    const r = await safePost('FINISH_JOB', { id: job.id, note, tag });
+    close('sh-finish');
+    if (r) { job = null; toast('✓ จบงานเรียบร้อย เก่งมาก!', 'ok'); route(); pull(); }
+    else { ackSent.add('done' + job.id); show('standby'); }
   }),
   break: async (_, btn) => {
     if (!await ask('☕', 'พักเบรก?', 'แอดมินจะยังไม่ลงคิวให้คุณ\nจนกว่าจะกดกลับมารับงาน', 'พักเบรก')) return;
     busy(btn, async () => { try { localStorage.setItem(LS.brk, String(now())); } catch (e) {} await post('UPDATE_DR_STATUS', { dr: me, status: 'break' }); route(); });
   },
   back: (_, btn) => busy(btn, async () => { await post('UPDATE_DR_STATUS', { dr: me, status: 'free' }); try { localStorage.removeItem(LS.brk); } catch (e) {} toast('✓ กลับมารับงานแล้ว', 'ok'); route(); }),
-  call: async (_, btn) => {
-    if (!await ask('🆘', 'เรียกแอดมิน?', 'เครื่องแอดมินจะส่งเสียงเตือนทันที', 'เรียกเลย', 'btn-bad')) return;
-    busy(btn, async () => { await post('CALL_ADMIN', { dr: me, timeStr: fmtT(now()) }); toast('✓ เรียกแอดมินแล้ว รอสักครู่', 'ok'); });
+  call: () => { $('#reqs').innerHTML = REQS.map(([i, m, c]) => `<button class="btn ${c || 'btn-ghost'} btn-sm req" data-act="reqSend" data-m="${esc(m)}"><span>${i}</span>${esc(m)}</button>`).join(''); open('sh-req'); },
+  reqSend: ({ m }, btn) => busy(btn, async () => { await sendReq(m); close('sh-req'); }),
+  prepTick: ({ i }) => { const k = 'prep_' + job.id, d = lsJ(k, []), n = Number(i); lsS(k, d.includes(n) ? d.filter(x => x !== n) : [...d, n]); $('#j-prep').innerHTML = prepHTML(job); navigator.vibrate?.(30); },
+  endShift: (_, btn) => busy(btn, endShift),
+  settings: () => { $('#set-goal').value = PREF.goal; $('#set-big').checked = PREF.big; $('#set-tts').checked = PREF.tts; $('#set-notify').checked = PREF.notify; open('sh-set'); },
+  saveSet: async () => {
+    PREF.goal = Math.max(0, Number($('#set-goal').value) || 0); PREF.big = $('#set-big').checked; PREF.tts = $('#set-tts').checked; PREF.notify = $('#set-notify').checked;
+    if (PREF.notify && 'Notification' in window && Notification.permission === 'default') { try { await Notification.requestPermission(); } catch (e) {} }
+    savePref(); applyPref(); close('sh-set'); if (started) route(); toast('✓ บันทึกแล้ว', 'ok'); if (PREF.tts) say('เปิดเสียงอ่านคิวแล้ว');
   },
   history: () => {
     const list = mine().filter(q => q.status === 'done').sort((a, b) => (b.doneTime || 0) - (a.doneTime || 0));
     const total = list.reduce((a, q) => a + commOf(q), 0), mins = doneJobs().reduce((a, q) => a + (Number(q.d) || 0), 0);
     $('#h-sub').textContent = `${doneJobs().length} คิว · ${Math.floor(mins / 60)} ชม. ${mins % 60} นาที`;
+    $('#h-week').innerHTML = weekHTML();
     $('#hist').innerHTML = list.map(q => `<div class="card hrow"><div><b>${q.kind === 'ext' ? 'ต่อเวลา · ' : ''}คุณ${esc(cleanName(q.n))}</b><small>${esc(TYPES[q.t] || q.t)} ${q.d} นาที · ${esc(q.time || '')}${q.pm === 'course' ? ' · คอร์ส' : ''}</small></div><span class="num">${baht(commOf(q))}</span></div>`).join('')
       || '<div class="empty">ยังไม่มีงานที่เสร็จวันนี้<br>สู้ๆ นะ 💪</div>';
     $('#h-total').innerHTML = list.length ? `<div class="total"><span>ค่ามือรวมวันนี้</span><span class="num">${baht(total)}</span></div>` : '';
@@ -818,13 +1098,14 @@ document.addEventListener('click', e => {
   const el = e.target.closest('[data-act]'); if (!el) return;
   const fn = A[el.dataset.act]; if (fn) fn({ ...el.dataset }, el);
 });
-document.addEventListener('visibilitychange', () => { if (!document.hidden) { pull(); if (started) keepAwake(); } });
-window.addEventListener('online', () => pull());
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { stopTitle(); pull(); if (started) keepAwake(); } });
+window.addEventListener('online', () => { pull(); flushOutbox(); });
 window.addEventListener('offline', () => net(false));
 
 /* ---------- boot ---------- */
 setInterval(() => { $('#clock').textContent = fmtT(now()); if (started) tick(); }, 1000);
 $('#clock').textContent = fmtT(now());
+applyPref();
 (async () => {
   await pull();
   if (!D) { $('#s-boot').innerHTML = '<div class="boot"><div style="text-align:center"><div class="mark" style="margin:0 auto 16px">✦</div><p class="sub">เชื่อมต่อระบบไม่ได้</p><button class="btn btn-ghost btn-sm" onclick="location.reload()">ลองใหม่</button></div></div>'; startPoll(); return; }

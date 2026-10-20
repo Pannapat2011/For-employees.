@@ -1,460 +1,585 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Staff Pager - บ้านประคบทอง</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #F2F4F7; --card-bg: #ffffff;
-            --text-main: #1C1C1E; --text-muted: #8E8E93;
-            --gold-light: #EED28A; --gold-primary: #D4AF37; --gold-dark: #B8860B;
-            --danger: #FF3B30; --success: #34C759; --info: #0A84FF; --warning: #FF9500;
-            --radius-card: 24px; --radius-btn: 18px;
-            --transition-fluid: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E0B07">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Staff Pager · บ้านประคบทอง</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Kanit:wght@300;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0E0B07;--bg2:#17120B;--card:rgba(255,244,222,.045);--card2:rgba(255,244,222,.075);--line:rgba(232,198,110,.14);--line2:rgba(232,198,110,.28);
+  --ink:#F7EEDC;--ink2:#CFC3AD;--muted:#8F8470;
+  --gold:#E8C66E;--gold2:#F3D489;--gold3:#B8892B;
+  --ok:#43CF85;--ok-soft:rgba(67,207,133,.14);--warn:#F2A93B;--warn-soft:rgba(242,169,59,.14);--bad:#FF6B5E;--bad-soft:rgba(255,107,94,.14);--info:#7AA8FF;
+  --r:24px;--ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans Thai',system-ui,sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{background:radial-gradient(130% 70% at 50% -10%,#3A2A10 0%,#1A140C 45%,var(--bg) 80%) fixed;overscroll-behavior:none}
+body::before{content:'✦';position:fixed;right:-14vmin;bottom:-18vmin;font-size:70vmin;color:var(--gold);opacity:.035;pointer-events:none}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+[hidden]{display:none!important}
+.num{font-family:'Kanit',sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.muted{color:var(--muted)}
 
-        body { font-family: 'Kanit', sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; color: var(--text-main); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden; }
-        .container { width: 100%; max-width: 400px; padding: 24px; box-sizing: border-box; text-align: center; }
+/* ---------- shell ---------- */
+.app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;max-width:460px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 18px calc(20px + env(safe-area-inset-bottom))}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.mark{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#EED08A,#B8892B);color:#2a1d07;font-size:17px;box-shadow:0 6px 20px rgba(232,198,110,.25);flex-shrink:0}
+.brand b{display:block;font-size:15px;font-weight:600;color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand small{display:block;font-size:12px;color:var(--muted);letter-spacing:.08em}
+.clock{font-size:22px;color:var(--ink2)}
+.sync{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px var(--ok-soft);margin-right:8px;vertical-align:middle;transition:.3s}
+.sync.off{background:var(--bad);box-shadow:0 0 0 4px var(--bad-soft)}
+.screen{flex:1;display:flex;flex-direction:column;animation:in .5s var(--ease)}
+@keyframes in{from{opacity:0;transform:translateY(12px)}}
 
-        .card { background: var(--card-bg); padding: 30px 24px; border-radius: var(--radius-card); box-shadow: 0 10px 30px rgba(0,0,0,0.08); width: 100%; box-sizing: border-box; animation: fadeIn 0.4s ease; }
-        
-        .form-control { width: 100%; padding: 16px; border-radius: var(--radius-btn); border: 2px solid #E5E5EA; background: #F9F9F9; color: var(--text-main); font-family: 'Kanit', sans-serif; font-size: 16px; box-sizing: border-box; margin-bottom: 16px; outline: none; transition: var(--transition-fluid); text-align: center; }
-        .form-control:focus { border-color: var(--gold-primary); }
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.eyebrow{font-size:12px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;font-weight:600}
+h1,h2,h3{margin:0;font-weight:600}
+.title{font-size:28px;line-height:1.25;margin:6px 0 4px}
+.sub{color:var(--ink2);font-size:15px}
 
-        .btn { width: 100%; padding: 16px; border-radius: var(--radius-btn); border: none; font-family: 'Kanit', sans-serif; font-size: 18px; font-weight: 600; cursor: pointer; transition: var(--transition-fluid); box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 12px; }
-        .btn:active { transform: scale(0.95); }
-        .btn-gold { background: linear-gradient(135deg, var(--gold-light), var(--gold-dark)); color: white; }
-        .btn-success { background: var(--success); color: white; }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-outline { background: transparent; border: 2px solid var(--text-muted); color: var(--text-muted); box-shadow: none; }
-        .btn-warning { background: var(--warning); color: white; }
-        
-        #alert-screen { display: none; position: fixed; inset: 0; background: var(--danger); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; color: white; padding: 20px; text-align: center; animation: flashBg 1s infinite alternate; }
-        
-        @keyframes flashBg { 0% { background: var(--danger); } 100% { background: #CC0000; } }
-        @keyframes pop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.btn{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:58px;padding:0 20px;border-radius:18px;font-weight:600;font-size:17px;transition:transform .15s,background .2s,box-shadow .2s;--spin:#fff}
+.btn:active{transform:scale(.97)}
+.btn-gold{background:linear-gradient(135deg,#F3D489,#B8892B);color:#24180A;box-shadow:0 10px 30px rgba(232,198,110,.28),inset 0 1px 0 rgba(255,255,255,.45);--spin:#24180A}
+.btn-ok{background:linear-gradient(135deg,#55DA92,#22A35E);color:#05200F;box-shadow:0 10px 30px rgba(67,207,133,.25);--spin:#05200F}
+.btn-ghost{background:var(--card2);border:1px solid var(--line);color:var(--ink)}
+.btn-bad{background:var(--bad-soft);border:1px solid rgba(255,107,94,.35);color:var(--bad);--spin:var(--bad)}
+.btn-xl{min-height:68px;font-size:19px;border-radius:22px}
+.btn-sm{min-height:46px;font-size:15px;border-radius:14px}
+.btn.loading{pointer-events:none;color:transparent!important}
+.btn.loading::after{content:'';position:absolute;width:20px;height:20px;border:2.5px solid var(--spin);border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.row{display:flex;gap:10px}
+.row>*{flex:1}
+.link{color:var(--muted);font-size:14px;padding:12px;margin:6px auto 0;display:block;text-decoration:underline;text-underline-offset:4px}
 
-        .alert-box { background: white; color: var(--text-main); padding: 30px; border-radius: 24px; width: 100%; max-width: 350px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        .pulse-icon { font-size: 60px; margin-bottom: 10px; animation: pop 0.5s infinite alternate; }
-        
-        .radar { width: 80px; height: 80px; background: rgba(212, 175, 55, 0.2); border-radius: 50%; margin: 30px auto; position: relative; display: flex; align-items: center; justify-content: center; font-size: 30px; }
-        .radar::before { content: ''; position: absolute; inset: -20px; border: 2px solid var(--gold-primary); border-radius: 50%; opacity: 0; animation: wave 2s infinite linear; }
-        @keyframes wave { 0% { transform: scale(0.5); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+/* ---------- login ---------- */
+.names{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:22px}
+.name{display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px 10px;border-radius:22px;background:var(--card);border:1px solid var(--line);transition:.2s}
+.name:active{transform:scale(.96);border-color:var(--gold)}
+.av{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;font-weight:700;font-size:22px;color:var(--gold2);background:linear-gradient(135deg,rgba(232,198,110,.22),rgba(184,137,43,.08));border:1px solid var(--line2)}
+.name b{font-weight:600;font-size:16px}
+.name small{font-size:12px;color:var(--muted)}
+.skeleton{height:132px;border-radius:22px;background:linear-gradient(90deg,var(--card) 0%,var(--card2) 50%,var(--card) 100%);background-size:200% 100%;animation:sk 1.4s infinite}
+@keyframes sk{to{background-position:-200% 0}}
 
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); display: none; align-items: center; justify-content: center; z-index: 10000; backdrop-filter: blur(10px); }
-        .modal-content { background: white; padding: 24px; border-radius: var(--radius-card); width: 90%; max-width: 350px; max-height: 80vh; overflow-y: auto; text-align: center; }
+/* ---------- hero (start / standby / break) ---------- */
+.hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:10px 0 24px}
+.orb{position:relative;width:200px;height:200px;margin:8px auto 28px;display:grid;place-items:center}
+.orb .core{position:relative;z-index:2;width:128px;height:128px;border-radius:50%;display:grid;place-items:center;font-size:50px;background:radial-gradient(circle at 35% 30%,rgba(243,212,137,.35),rgba(184,137,43,.12) 60%,rgba(184,137,43,.05));border:1px solid var(--line2);box-shadow:0 0 60px rgba(232,198,110,.18),inset 0 0 30px rgba(232,198,110,.12)}
+.orb i{position:absolute;inset:36px;border-radius:50%;border:1.5px solid var(--gold);opacity:0;animation:ripple 3s var(--ease) infinite}
+.orb i:nth-child(2){animation-delay:1s}.orb i:nth-child(3){animation-delay:2s}
+@keyframes ripple{0%{transform:scale(.8);opacity:.7}100%{transform:scale(1.55);opacity:0}}
+.orb.ok .core{background:radial-gradient(circle at 35% 30%,rgba(85,218,146,.3),rgba(34,163,94,.1) 60%);border-color:rgba(67,207,133,.35);box-shadow:0 0 60px rgba(67,207,133,.18)}
+.orb.ok i{border-color:var(--ok)}
+.orb.warn .core{background:radial-gradient(circle at 35% 30%,rgba(242,169,59,.3),rgba(242,169,59,.08) 60%);border-color:rgba(242,169,59,.35);box-shadow:0 0 60px rgba(242,169,59,.16)}
+.orb.warn i{border-color:var(--warn);animation-duration:4s}
+.status{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;font-size:13px;font-weight:600;letter-spacing:.04em}
+.status.ok{background:var(--ok-soft);color:var(--ok)}
+.status.warn{background:var(--warn-soft);color:var(--warn)}
+.status .dot{width:7px;height:7px;border-radius:50%;background:currentColor;animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.3}}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;margin:26px 0 14px}
+.stat{padding:14px 8px;text-align:center}
+.stat b{display:block;font-size:24px;font-weight:500;color:var(--gold2);line-height:1.2}
+.stat span{font-size:12px;color:var(--muted)}
+.next{width:100%;display:flex;align-items:center;gap:14px;padding:14px 16px;text-align:left;margin-bottom:14px}
+.next .t{font-size:22px;color:var(--gold2);min-width:62px}
+.next b{display:block;font-weight:600}
+.next small{color:var(--muted);font-size:13px}
+.actions{width:100%;display:flex;flex-direction:column;gap:10px}
+.break-time{font-size:56px;font-weight:500;color:var(--warn);line-height:1;margin:4px 0 6px}
 
-        #offline-banner { display: none; position: fixed; top: 0; left: 0; width: 100%; background: var(--danger); color: white; padding: 12px; text-align: center; font-weight: bold; z-index: 10050; font-size: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+/* ---------- active job ---------- */
+.ring{position:relative;width:250px;height:250px;margin:6px auto 18px}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .track{fill:none;stroke:rgba(255,244,222,.07);stroke-width:12}
+.ring .prog{fill:none;stroke:url(#rg);stroke-width:12;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .4s}
+.ring.low .prog{stroke:var(--warn)}
+.ring.over .prog{stroke:var(--bad)}
+.ring-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.ring-c .left{font-size:58px;font-weight:500;line-height:1;color:var(--ink)}
+.ring.low .left{color:var(--warn)}
+.ring.over .left{color:var(--bad);font-size:40px}
+.ring-c small{color:var(--muted);font-size:13px;margin-top:6px}
+.ring-c .end{color:var(--ink2);font-size:14px;margin-top:2px}
+.job{padding:18px;margin-bottom:14px}
+.job-h{display:flex;align-items:center;gap:12px}
+.job-h .av{width:48px;height:48px;font-size:18px;border-radius:15px}
+.job-h b{font-size:19px;font-weight:600;display:block;line-height:1.3}
+.job-h span{color:var(--ink2);font-size:14px}
+.tag{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600;margin-left:6px;vertical-align:middle}
+.tag.vip{background:rgba(232,198,110,.18);color:var(--gold2)}
+.tag.warn{background:var(--warn-soft);color:var(--warn)}
+.tag.bad{background:var(--bad-soft);color:var(--bad)}
+.note{margin-top:14px;padding:12px 14px;border-radius:14px;background:var(--warn-soft);border:1px solid rgba(242,169,59,.25);color:#FFD9A0;font-size:15px;display:flex;gap:10px}
+.note b{color:var(--warn)}
+.alertline{margin-top:10px;padding:10px 14px;border-radius:14px;background:var(--bad-soft);color:var(--bad);font-size:14px;font-weight:600}
 
-        /* 🚀 สไตล์สำหรับปุ่ม Emoji ประเมินลูกค้า */
-        .emoji-chip { 
-            font-size: 40px; 
-            padding: 10px; 
-            background: #F2F4F7; 
-            border-radius: 16px; 
-            cursor: pointer; 
-            flex: 1; 
-            transition: 0.2s; 
-            border: 3px solid transparent; 
-            text-align: center;
-            filter: grayscale(100%);
-            opacity: 0.4;
-            user-select: none;
-        }
-        .emoji-chip.active { 
-            filter: grayscale(0%);
-            opacity: 1;
-            background: rgba(212, 175, 55, 0.15); 
-            border-color: var(--gold-primary); 
-            transform: scale(1.15); 
-        }
-    </style>
+/* ---------- new job alert ---------- */
+.alert{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(24px + env(safe-area-inset-top)) 22px calc(24px + env(safe-area-inset-bottom));background:radial-gradient(120% 80% at 50% 20%,#5A3D0E 0%,#1E1409 55%,#0B0804 100%);text-align:center;animation:in .35s var(--ease)}
+.alert::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 32%,rgba(243,212,137,.35),transparent 55%);animation:glow 1.2s ease-in-out infinite alternate}
+@keyframes glow{from{opacity:.35}to{opacity:1}}
+.alert>*{position:relative}
+.bell{width:120px;height:120px;border-radius:50%;display:grid;place-items:center;font-size:56px;background:linear-gradient(135deg,#F3D489,#B8892B);box-shadow:0 0 0 14px rgba(232,198,110,.15),0 0 0 30px rgba(232,198,110,.07),0 20px 60px rgba(232,198,110,.4);animation:ring 1s ease-in-out infinite}
+@keyframes ring{0%,100%{transform:rotate(0)}10%{transform:rotate(14deg)}20%{transform:rotate(-12deg)}30%{transform:rotate(9deg)}40%{transform:rotate(-6deg)}50%{transform:rotate(0)}}
+.alert h1{font-size:34px;color:var(--gold2);margin:30px 0 6px}
+.alert .card{width:100%;max-width:400px;padding:18px;margin:18px 0 22px;text-align:left}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:16px}
+.kv:last-child{border:0}
+.kv span{color:var(--muted)}
+.kv b{font-weight:600;text-align:right}
+.alert .btn{max-width:400px}
+
+/* ---------- sheet / dialog ---------- */
+.sheet{position:fixed;inset:0;z-index:200;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity .25s}
+.sheet.open{opacity:1}
+.panel{width:100%;max-width:460px;max-height:92vh;max-height:92dvh;overflow-y:auto;background:linear-gradient(180deg,#221A10,#15100A);border:1px solid var(--line);border-bottom:0;border-radius:30px 30px 0 0;padding:8px 20px calc(22px + env(safe-area-inset-bottom));transform:translateY(40px);transition:transform .35s var(--ease)}
+.sheet.open .panel{transform:none}
+.grab{width:40px;height:5px;border-radius:5px;background:var(--line2);margin:6px auto 16px}
+.panel h2{font-size:22px;margin-bottom:4px}
+.field-l{font-size:13px;font-weight:600;color:var(--ink2);margin:20px 0 10px;letter-spacing:.04em}
+.moods{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mood{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 4px;border-radius:18px;background:var(--card);border:1.5px solid var(--line);font-size:12px;color:var(--muted);transition:.2s}
+.mood em{font-style:normal;font-size:32px;filter:grayscale(1);opacity:.5;transition:.2s}
+.mood.on{border-color:var(--gold);background:rgba(232,198,110,.12);color:var(--gold2)}
+.mood.on em{filter:none;opacity:1;transform:scale(1.12)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.chip{padding:8px 14px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:14px;color:var(--ink2)}
+.chip:active{background:var(--card2)}
+textarea{width:100%;min-height:84px;border-radius:16px;border:1.5px solid var(--line);background:rgba(0,0,0,.25);padding:14px;font-size:16px;resize:none;outline:none}
+textarea:focus{border-color:var(--gold)}
+.dlg-ic{font-size:46px;text-align:center;margin:4px 0 6px}
+.dlg-t{text-align:center;font-size:21px;margin:0 0 6px}
+.dlg-m{text-align:center;color:var(--ink2);margin:0 0 22px;white-space:pre-line}
+.hist{display:flex;flex-direction:column;gap:8px;margin:14px 0 4px}
+.hrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px}
+.hrow b{display:block;font-weight:600}
+.hrow small{color:var(--muted);font-size:13px}
+.hrow .num{color:var(--gold2);font-size:18px;white-space:nowrap}
+.total{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;margin-top:10px;border-radius:18px;background:linear-gradient(135deg,rgba(232,198,110,.2),rgba(184,137,43,.08));border:1px solid var(--line2)}
+.total .num{font-size:28px;color:var(--gold2)}
+.empty{text-align:center;color:var(--muted);padding:26px 10px}
+
+/* ---------- misc ---------- */
+.offline{position:fixed;left:0;right:0;top:0;z-index:300;padding:calc(8px + env(safe-area-inset-top)) 12px 8px;background:var(--bad);color:#fff;font-size:13.5px;font-weight:600;text-align:center}
+.toasts{position:fixed;left:50%;top:calc(16px + env(safe-area-inset-top));transform:translateX(-50%);z-index:400;width:min(92vw,420px);display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{padding:13px 18px;border-radius:16px;background:#F7EEDC;color:#1E160A;font-weight:600;font-size:14.5px;box-shadow:0 14px 40px rgba(0,0,0,.45);animation:tin .35s var(--ease)}
+.toast.ok{background:var(--ok);color:#04200F}.toast.bad{background:var(--bad);color:#fff}
+.toast.out{opacity:0;transform:translateY(-8px);transition:.3s}
+@keyframes tin{from{opacity:0;transform:translateY(-12px) scale(.97)}}
+.boot{flex:1;display:grid;place-items:center}
+.boot .mark{width:64px;height:64px;font-size:30px;border-radius:20px;animation:breathe 1.6s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(.92);opacity:.7}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
+</style>
 </head>
 <body>
+<div class="offline" id="offline" hidden>⚠️ อินเทอร์เน็ตขาดหาย — กำลังเชื่อมต่อใหม่ อาจพลาดแจ้งเตือนคิว</div>
+<div class="toasts" id="toasts"></div>
 
-<div id="offline-banner">⚠️ สัญญาณอินเทอร์เน็ตขาดหาย! กรุณาเช็คเน็ต</div>
+<div class="app">
+  <header class="top">
+    <div class="brand"><div class="mark">✦</div><div><b id="shop">บ้านประคบทอง</b><small>STAFF PAGER</small></div></div>
+    <div class="clock num"><span class="sync" id="sync"></span><span id="clock">--:--</span></div>
+  </header>
 
-<div id="login-screen" class="container card">
-    <h1 style="color:var(--gold-dark); margin:0 0 8px 0;">ระบบพนักงาน</h1>
-    <p style="color:var(--text-muted); margin-bottom: 24px;">เลือกชื่อของคุณเพื่อเข้าสู่ระบบ</p>
-    <select id="dr-select" class="form-control">
-        <option value="" disabled selected>กำลังโหลดรายชื่อพนักงาน...</option>
-    </select>
-    <button class="btn btn-gold" onclick="login()">เข้าสู่ระบบ</button>
-</div>
+  <!-- boot -->
+  <section class="screen" id="s-boot"><div class="boot"><div class="mark">✦</div></div></section>
 
-<div id="start-screen" class="container card" style="display:none;">
-    <h2 style="margin-top:0;">สวัสดี, <span id="dr-name-display" style="color:var(--gold-dark);"></span></h2>
-    <p style="color:var(--text-muted); font-size:14px;">กรุณากดปุ่มด้านล่างเพื่อเปิดรับการแจ้งเตือน (สั่น+เสียง)</p>
-    <button class="btn btn-success" onclick="startPager()" style="padding: 20px; font-size:20px;">▶️ เริ่มรับงาน</button>
-    <button onclick="logout()" style="background:none; border:none; color:var(--danger); margin-top:16px; cursor:pointer; font-family:'Kanit';">เปลี่ยนชื่อพนักงาน</button>
-</div>
+  <!-- login -->
+  <section class="screen" id="s-login" hidden>
+    <div class="eyebrow">ยินดีต้อนรับ</div>
+    <h1 class="title">คุณคือใคร?</h1>
+    <p class="sub">แตะชื่อของคุณเพื่อเข้าสู่ระบบ</p>
+    <div class="names" id="names"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+  </section>
 
-<div id="standby-screen" class="container card" style="display:none;">
-    <h2 style="margin-top:0; color:var(--success);">สถานะ: พร้อมทำงาน</h2>
-    <div class="radar">💆</div>
-    <h3 id="dr-standby-name"></h3>
-    <p style="color:var(--text-muted); font-size:14px;">เปิดหน้านี้ทิ้งไว้ ระบบจะสั่นเตือนเมื่อมีคิวงาน</p>
-    
-    <div style="display: flex; gap: 8px; margin-top: 16px;">
-        <button class="btn btn-outline" style="font-size: 14px; padding: 10px;" onclick="takeBreak()">☕ ขอพักเบรก (เข้าห้องน้ำ/กินข้าว)</button>
+  <!-- start (ต้องแตะ 1 ครั้งเพื่อเปิดเสียง) -->
+  <section class="screen" id="s-start" hidden>
+    <div class="hero">
+      <div class="orb"><i></i><i></i><i></i><div class="core">🙏</div></div>
+      <div class="eyebrow">สวัสดี</div>
+      <h1 class="title" id="start-name"></h1>
+      <p class="sub">กดเริ่มรับงาน เพื่อเปิดเสียงและการสั่นแจ้งเตือนคิวใหม่</p>
     </div>
-    <button class="btn btn-outline" style="margin-top: 8px; font-size: 15px; padding: 10px; border-color:var(--info); color:var(--info);" onclick="showMyWork()">📊 สรุปประวัติงานวันนี้</button>
-</div>
-
-<div id="break-screen" class="container card" style="display:none; border: 2px solid var(--warning);">
-    <h2 style="margin-top:0; color:var(--warning);">☕ กำลังพักเบรก</h2>
-    <p style="color:var(--text-muted); font-size:14px;">สถานะของคุณคือ "ไม่ว่าง" แอดมินจะไม่สามารถลงคิวให้ได้</p>
-    <button class="btn btn-success" style="padding: 20px; font-size:20px; margin-top: 24px;" onclick="backToWork()">🏃‍♂️ กลับมารับงานต่อ</button>
-</div>
-
-<div id="active-job-screen" class="container card" style="display:none; border: 2px solid var(--gold-primary);">
-    <h2 style="margin-top:0; color:var(--gold-dark);">🔥 กำลังให้บริการ</h2>
-    
-    <h1 id="job-timer" style="font-size: 54px; color: var(--danger); margin: 10px 0; font-weight: 600;">00:00</h1>
-    <p style="color:var(--text-muted); font-size:12px; margin-top:-10px;">เวลาคงเหลือโดยประมาณ</p>
-
-    <div style="background:#F9F9F9; padding: 16px; border-radius: 16px; margin: 16px 0; text-align: left;">
-        <p style="margin:4px 0; font-size: 18px;"><strong>คุณ:</strong> <span id="act-cust" style="color:var(--info);"></span></p>
-        <p style="margin:4px 0;"><strong>บริการ:</strong> <span id="act-serv"></span></p>
-        <p style="margin:4px 0;"><strong>เริ่มตอน:</strong> <span id="act-time"></span></p>
-        <p style="margin:4px 0;"><strong>หมายเหตุ:</strong> <span id="act-note" style="color:var(--danger);"></span></p>
+    <div class="actions">
+      <button class="btn btn-gold btn-xl" data-act="start">▶ เริ่มรับงาน</button>
+      <button class="link" data-act="logout">ไม่ใช่ฉัน · เปลี่ยนชื่อ</button>
     </div>
-    
-    <button class="btn btn-success" style="padding: 20px; font-size:20px;" onclick="openFinishModal()">✅ นวดเสร็จแล้ว</button>
-    <button class="btn btn-danger" style="margin-top: 8px;" onclick="callAdmin()">🆘 เรียกแอดมินด่วน</button>
-</div>
+  </section>
 
-<div id="alert-screen">
-    <div class="alert-box">
-        <div class="pulse-icon">🔔</div>
-        <h1 style="color:var(--danger); margin: 0 0 8px 0; font-size:28px;">มีคิวงานใหม่!</h1>
-        <div style="background:#F2F4F7; padding: 16px; border-radius: 16px; margin: 20px 0; text-align: left;">
-            <p style="margin:4px 0;"><strong>ลูกค้า:</strong> <span id="a-cust" style="color:var(--info);"></span></p>
-            <p style="margin:4px 0;"><strong>บริการ:</strong> <span id="a-serv"></span></p>
-            <p style="margin:4px 0;"><strong>เวลา:</strong> <span id="a-time"></span></p>
-            <p style="margin:4px 0;"><strong>หมายเหตุ:</strong> <span id="a-note" style="color:var(--danger);"></span></p>
-        </div>
-        <button class="btn btn-success" style="padding: 20px; font-size:22px; width:100%;" onclick="acknowledgeJob()">✅ รับทราบงาน</button>
+  <!-- standby -->
+  <section class="screen" id="s-standby" hidden>
+    <div class="hero" style="padding-bottom:6px">
+      <div class="orb ok"><i></i><i></i><i></i><div class="core">💆</div></div>
+      <span class="status ok"><span class="dot"></span>พร้อมรับงาน</span>
+      <h1 class="title" id="sb-name"></h1>
+      <p class="sub">วางหน้านี้ไว้ได้เลย ระบบจะสั่นและส่งเสียงเมื่อมีคิว</p>
+      <div class="stats">
+        <div class="card stat"><b class="num" id="st-jobs">0</b><span>คิววันนี้</span></div>
+        <div class="card stat"><b class="num" id="st-hours">0</b><span>ชั่วโมง</span></div>
+        <div class="card stat"><b class="num" id="st-comm">฿0</b><span>ค่ามือ</span></div>
+      </div>
+      <div id="next-bk"></div>
     </div>
-</div>
-
-<div id="my-work-modal" class="modal-overlay">
-    <div class="modal-content">
-        <h2 style="margin-top: 0; color: var(--gold-dark);">📊 สรุปงานของฉันวันนี้</h2>
-        <div id="work-log-content" style="font-size: 14px; margin-bottom: 20px; max-height: 40vh; overflow-y:auto; text-align:left;">กำลังโหลด...</div>
-        <button class="btn btn-gold" onclick="document.getElementById('my-work-modal').style.display='none'">ปิดหน้าต่าง</button>
+    <div class="actions">
+      <div class="row">
+        <button class="btn btn-ghost btn-sm" data-act="break">☕ พักเบรก</button>
+        <button class="btn btn-ghost btn-sm" data-act="history">📊 งานของฉัน</button>
+      </div>
+      <button class="btn btn-bad btn-sm" data-act="call">🆘 เรียกแอดมิน</button>
     </div>
-</div>
+  </section>
 
-<div id="finish-modal" class="modal-overlay">
-    <div class="modal-content">
-        <h2 style="margin-top: 0; color: var(--success);">✅ สรุปการให้บริการ</h2>
-        
-        <label style="font-size: 14px; font-weight: bold; color: var(--text-main); display:block; text-align:left; margin-bottom:8px;">ประเมินลูกค้า (กดเลือกหน้ายิ้ม)</label>
-        
-        <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-            <div class="emoji-chip active" onclick="selectEmojiTag(this, '👤 ปกติ')">🙂</div>
-            <div class="emoji-chip" onclick="selectEmojiTag(this, '🌟 VIP')">🤩</div>
-            <div class="emoji-chip" onclick="selectEmojiTag(this, '⚠️ ระวัง')">😓</div>
-            <div class="emoji-chip" onclick="selectEmojiTag(this, '🚫 แบล็กลิสต์')">😡</div>
-        </div>
-        <input type="hidden" id="dr-cust-tag" value="👤 ปกติ">
-
-        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 8px; text-align:left;">บันทึกเพิ่มเติม (เลือกพิมพ์)</p>
-        <textarea id="dr-note" class="form-control" rows="2" placeholder="เช่น นวดแรง, แพ้ยาหม่อง..." style="resize:none; text-align:left;"></textarea>
-        
-        <button class="btn btn-success" style="margin-bottom: 8px;" onclick="confirmFinishJob()">ส่งข้อมูลและจบงาน</button>
-        <button class="btn btn-outline" onclick="document.getElementById('finish-modal').style.display='none'">ยกเลิก</button>
+  <!-- break -->
+  <section class="screen" id="s-break" hidden>
+    <div class="hero">
+      <div class="orb warn"><i></i><i></i><i></i><div class="core">☕</div></div>
+      <span class="status warn"><span class="dot"></span>กำลังพักเบรก</span>
+      <div class="break-time num" id="break-time">00:00</div>
+      <p class="sub">แอดมินจะยังไม่ลงคิวให้คุณ จนกว่าจะกดกลับมารับงาน</p>
     </div>
+    <div class="actions">
+      <button class="btn btn-ok btn-xl" data-act="back">กลับมารับงาน</button>
+    </div>
+  </section>
+
+  <!-- active job -->
+  <section class="screen" id="s-job" hidden>
+    <div style="text-align:center"><span class="status warn" style="color:var(--gold2);background:rgba(232,198,110,.14)"><span class="dot"></span>กำลังให้บริการ</span></div>
+    <div class="ring" id="ring">
+      <svg viewBox="0 0 120 120"><defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F3D489"/><stop offset="1" stop-color="#B8892B"/></linearGradient></defs>
+        <circle class="track" cx="60" cy="60" r="52"/><circle class="prog" id="prog" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="0"/></svg>
+      <div class="ring-c"><div class="left num" id="left">--:--</div><small id="left-l">เวลาคงเหลือ</small><div class="end num" id="end"></div></div>
+    </div>
+    <div class="card job">
+      <div class="job-h"><div class="av" id="j-av">ค</div><div><b id="j-cust"></b><span id="j-serv"></span></div></div>
+      <div id="j-note"></div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-ok btn-xl" data-act="finish">✓ นวดเสร็จแล้ว</button>
+      <button class="btn btn-bad btn-sm" data-act="call">🆘 เรียกแอดมินด่วน</button>
+    </div>
+  </section>
 </div>
+
+<!-- new job alert -->
+<div class="alert" id="alert" hidden>
+  <div class="bell">🔔</div>
+  <h1>มีคิวงานใหม่!</h1>
+  <p class="sub">แตะรับทราบ แล้วไปเตรียมห้องได้เลย</p>
+  <div class="card">
+    <div class="kv"><span>ลูกค้า</span><b id="a-cust"></b></div>
+    <div class="kv"><span>บริการ</span><b id="a-serv"></b></div>
+    <div class="kv"><span>เริ่ม</span><b class="num" id="a-time"></b></div>
+    <div class="kv" id="a-note-row"><span>หมายเหตุ</span><b id="a-note" style="color:var(--warn)"></b></div>
+  </div>
+  <button class="btn btn-gold btn-xl" data-act="ack">✓ รับทราบงาน</button>
+</div>
+
+<!-- finish sheet -->
+<div class="sheet" id="sh-finish" hidden><div class="panel">
+  <div class="grab"></div>
+  <h2>สรุปการให้บริการ</h2>
+  <p class="sub" id="f-cust"></p>
+  <div class="field-l">ลูกค้าท่านนี้เป็นอย่างไร</div>
+  <div class="moods" id="moods">
+    <button class="mood on" data-act="mood" data-v="👤 ปกติ"><em>🙂</em>ปกติ</button>
+    <button class="mood" data-act="mood" data-v="⭐ VIP"><em>🤩</em>VIP</button>
+    <button class="mood" data-act="mood" data-v="⚠️ ระวัง"><em>😓</em>ระวัง</button>
+    <button class="mood" data-act="mood" data-v="⛔ แบล็กลิสต์"><em>😡</em>แบล็กลิสต์</button>
+  </div>
+  <div class="field-l">บันทึกถึงคนต่อไป (ไม่บังคับ)</div>
+  <div class="chips">
+    <button class="chip" data-act="qn" data-v="ชอบนวดหนัก">+ ชอบนวดหนัก</button>
+    <button class="chip" data-act="qn" data-v="ชอบนวดเบา">+ ชอบนวดเบา</button>
+    <button class="chip" data-act="qn" data-v="ปวดคอบ่าไหล่">+ ปวดคอบ่าไหล่</button>
+    <button class="chip" data-act="qn" data-v="ปวดหลัง">+ ปวดหลัง</button>
+    <button class="chip" data-act="qn" data-v="แพ้ยาหม่อง">+ แพ้ยาหม่อง</button>
+  </div>
+  <textarea id="f-note" placeholder="พิมพ์เพิ่มเติม…"></textarea>
+  <div class="actions" style="margin-top:18px">
+    <button class="btn btn-ok btn-xl" data-act="confirmFinish">ส่งข้อมูลและจบงาน</button>
+    <button class="btn btn-ghost btn-sm" data-act="close">ยกเลิก</button>
+  </div>
+</div></div>
+
+<!-- history sheet -->
+<div class="sheet" id="sh-hist" hidden><div class="panel">
+  <div class="grab"></div>
+  <h2>งานของฉันวันนี้</h2>
+  <p class="sub" id="h-sub"></p>
+  <div class="hist" id="hist"></div>
+  <div id="h-total"></div>
+  <p class="muted" style="font-size:12.5px;text-align:center;margin:12px 0 4px">ค่ามือเป็นยอดประมาณ ยอดจริงดูได้จากแอดมิน</p>
+  <button class="btn btn-ghost btn-sm" data-act="close" style="margin-top:10px">ปิด</button>
+</div></div>
+
+<!-- confirm dialog -->
+<div class="sheet" id="sh-dlg" hidden><div class="panel">
+  <div class="grab"></div>
+  <div class="dlg-ic" id="d-ic"></div>
+  <h2 class="dlg-t" id="d-t"></h2>
+  <p class="dlg-m" id="d-m"></p>
+  <div class="row"><button class="btn btn-ghost btn-sm" data-act="close">ยกเลิก</button><button class="btn btn-gold btn-sm" id="d-ok" data-act="dlgOk">ยืนยัน</button></div>
+</div></div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx0mlNpEdpiHe9wLPb_LgPopHFtC8GYchP7wImRRGx4YMb0k4zgPBDWUsZq2RhoXSXW/exec"; 
-    const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1489169746934108170/YxvxW_vJ5E8eb1m30rWmlELObxgNMssrUdOy2IAhi6K8xtL2QIu8MxflQeAMVAq1NqCu";
+'use strict';
+/* ════════════════════════════════════════════════════════════════
+   ตั้งค่า — ต้องเป็นลิงก์ Web App เดียวกับหน้าแอดมิน (Code.gs v3 ขึ้นไป)
+   ════════════════════════════════════════════════════════════════ */
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbylXf_kfZmAo2qN2UTnF4NpIfUhadHRflMLr2CAkqOXLI8rlTnBTRoVtyYty_IX1MH6/exec";
+const POLL_MS = 5000;
 
-    let myName = localStorage.getItem('pager_dr_name');
-    let pollInterval = null;
-    let alertInterval = null;
-    let countdownInterval = null;
-    let audioCtx = null;
-    let currentJobId = null;
-    let localQs = []; 
+const TYPES = { thai: 'นวดไทย', foot: 'นวดเท้า', back: 'นวดไทยรีดเส้น', oil: 'นวดน้ำมัน', spa: 'ขัดผิวกาย', face: 'นวดหน้า / ขัดหน้า', herb: 'อบสมุนไพร' };
+const LS = { name: 'pager_dr_name', brk: 'pager_break_at' };
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const pad = n => String(n).padStart(2, '0');
+const baht = n => '฿' + Math.round(Number(n) || 0).toLocaleString('th-TH');
+const initial = n => { const s = String(n || '?').replace(/^หมอ\s*/, '').trim() || String(n); return /^[เแโใไ]/.test(s) ? s.slice(0, 2) : s.slice(0, 1); };
+const cleanName = n => String(n || '').replace(/^\[.*?\]\s*/, '');
+const fmtT = ms => { const d = new Date(ms); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
 
-    window.addEventListener('offline', () => document.getElementById('offline-banner').style.display = 'block');
-    window.addEventListener('online', () => document.getElementById('offline-banner').style.display = 'none');
+let me = localStorage.getItem(LS.name) || '';
+let D = null, offset = 0, started = false, job = null, ackSent = new Set();
+let pollT = null, alarmT = null, tickT = null, audio = null, wake = null, tag = '👤 ปกติ', dlgResolve = null, pulling = false;
+const now = () => Date.now() + offset;
 
-    function playAlertSound() {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-        osc.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(880, audioCtx.currentTime); 
-        osc.frequency.setValueAtTime(1108.73, audioCtx.currentTime + 0.1); 
-        gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-        gainNode.gain.linearRampToValueAtTime(1, audioCtx.currentTime + 0.05);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
-        osc.start(audioCtx.currentTime);
-        osc.stop(audioCtx.currentTime + 0.5);
+/* ---------- UI helpers ---------- */
+function show(id) { document.querySelectorAll('.screen').forEach(s => s.hidden = s.id !== 's-' + id); }
+function toast(msg, type = '') {
+  const el = document.createElement('div'); el.className = 'toast ' + type; el.textContent = msg; $('#toasts').appendChild(el);
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 300); }, type === 'bad' ? 4000 : 2600);
+}
+function open(id) { const s = $('#' + id); s.hidden = false; requestAnimationFrame(() => requestAnimationFrame(() => s.classList.add('open'))); }
+function close(id) {
+  const s = $('#' + id); if (!s.classList.contains('open')) return;
+  s.classList.remove('open'); setTimeout(() => { if (!s.classList.contains('open')) s.hidden = true; }, 300);
+  if (id === 'sh-dlg' && dlgResolve) { const r = dlgResolve; dlgResolve = null; r(false); }
+}
+function ask(ic, t, m, ok = 'ยืนยัน', cls = 'btn-gold') {
+  $('#d-ic').textContent = ic; $('#d-t').textContent = t; $('#d-m').textContent = m;
+  const b = $('#d-ok'); b.textContent = ok; b.className = 'btn btn-sm ' + cls;
+  open('sh-dlg'); return new Promise(r => dlgResolve = r);
+}
+async function busy(btn, fn) {
+  if (btn) { if (btn.classList.contains('loading')) return; btn.classList.add('loading'); }
+  try { return await fn(); } catch (e) { toast(e.message || 'เกิดข้อผิดพลาด', 'bad'); } finally { btn && btn.classList.remove('loading'); }
+}
+
+/* ---------- sound / vibration / wake lock ---------- */
+function ctx() { if (!audio) { try { audio = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (audio && audio.state === 'suspended') audio.resume(); return audio; }
+function chime(loud) {
+  const c = ctx(); if (!c) return;
+  const t0 = c.currentTime + .02;
+  [[1046.5, 0], [1318.5, .14], [1568, .28], [2093, .42]].forEach(([f, dt]) => {
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = 'triangle'; o.frequency.value = f; o.connect(g); g.connect(c.destination);
+    const s = t0 + dt; g.gain.setValueAtTime(.0001, s); g.gain.exponentialRampToValueAtTime(loud ? .6 : .25, s + .01); g.gain.exponentialRampToValueAtTime(.0001, s + .7);
+    o.start(s); o.stop(s + .75);
+  });
+}
+async function keepAwake() { try { if ('wakeLock' in navigator && !wake) { wake = await navigator.wakeLock.request('screen'); wake.addEventListener('release', () => wake = null); } } catch (e) {} }
+
+/* ---------- network ---------- */
+async function post(action, data = {}) {
+  const res = await fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action, ...data }) });
+  const txt = await res.text(); let j; try { j = JSON.parse(txt); } catch (e) { j = { ok: !/^ERROR/.test(txt) }; }
+  if (j.ok === false) throw new Error(j.msg || 'ทำรายการไม่สำเร็จ');
+  if (j.qs) apply(j);
+  return j;
+}
+async function pull() {
+  if (pulling) return; pulling = true;
+  try {
+    const j = await (await fetch(SCRIPT_URL + '?type=light&t=' + Date.now())).json();
+    if (j.ok === false) throw 0;
+    apply(j); net(true);
+  } catch (e) { net(false); } finally { pulling = false; }
+}
+function net(ok) { $('#sync').classList.toggle('off', !ok); $('#offline').hidden = ok; }
+
+/* ---------- state ---------- */
+function apply(j) {
+  if (j.now) offset = j.now - Date.now();
+  D = j;
+  if (j.cfg?.shop?.name) $('#shop').textContent = j.cfg.shop.name;
+  if (!me) return renderLogin();
+  if (D.drs && !D.drs.some(d => d.n === me)) { toast('ไม่พบชื่อของคุณในระบบแล้ว', 'bad'); return logout(); }
+  if (started) route();
+}
+function mine() { return (D?.qs || []).filter(q => q.dr === me); }
+function myStatus() { return (D?.drs || []).find(d => d.n === me)?.st || 'free'; }
+function route() {
+  const active = mine().find(q => q.status === 'active');
+  if (active) {
+    job = active;
+    if (!active.staffAck && !ackSent.has(String(active.id))) return startAlarm(active);
+    stopAlarm(); renderJob(); return show('job');
+  }
+  job = null; stopAlarm();
+  if (myStatus() === 'break') { renderBreak(); return show('break'); }
+  try { localStorage.removeItem(LS.brk); } catch (e) {}
+  renderStandby(); show('standby');
+}
+
+/* ---------- renders ---------- */
+function renderLogin() {
+  show('login');
+  const drs = D?.drs || [];
+  $('#names').innerHTML = drs.map(d => `<button class="name" data-act="pick" data-n="${esc(d.n)}"><div class="av">${esc(initial(d.n))}</div><b>${esc(d.n)}</b><small>${d.st === 'break' ? 'พักเบรก' : d.st === 'busy' ? 'ติดงาน' : 'พร้อม'}</small></button>`).join('')
+    || '<div class="empty" style="grid-column:1/-1">ยังไม่มีรายชื่อพนักงาน<br>ให้แอดมินเพิ่มในระบบก่อน</div>';
+}
+function commOf(q) {
+  if (q.c != null) return Number(q.c) || 0;
+  if (q.pm === 'course') return String(q.note || '').includes('รีดเส้น') ? 300 : 200;
+  if (q.t === 'thai') return q.d / 60 * 100;
+  if (q.t === 'herb') return 50;
+  return (Number(q.p) || 0) / 2;
+}
+function doneJobs() { return mine().filter(q => q.status === 'done' && q.kind !== 'ext' && q.kind !== 'reg'); }
+function renderStandby() {
+  $('#sb-name').textContent = me;
+  const done = doneJobs(), all = mine().filter(q => q.status === 'done');
+  const mins = done.reduce((a, q) => a + (Number(q.d) || 0), 0);
+  $('#st-jobs').textContent = done.length;
+  $('#st-hours').textContent = (mins / 60).toFixed(mins % 60 ? 1 : 0);
+  $('#st-comm').textContent = baht(all.reduce((a, q) => a + commOf(q), 0));
+  const d = new Date(now()), today = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`, hm = fmtT(now());
+  const nb = (D?.bk || []).filter(b => b.dr === me && b.date === today && b.time >= hm).sort((a, b) => a.time.localeCompare(b.time))[0];
+  $('#next-bk').innerHTML = nb ? `<div class="card next"><div class="t num">${esc(nb.time)}</div><div><b>นัดถัดไป · คุณ${esc(nb.n)}</b><small>${esc(TYPES[nb.t] || nb.t)} · ${nb.d} นาที</small></div></div>` : '';
+}
+function tagHTML(n) {
+  const t = (D?.ctags || {})[n]; if (!t || t.includes('ปกติ')) return '';
+  const cls = /แบล็ก|⛔|🚫/.test(t) ? 'bad' : /ระวัง/.test(t) ? 'warn' : 'vip';
+  return `<span class="tag ${cls}">${esc(t)}</span>`;
+}
+function renderJob() {
+  const q = job;
+  $('#j-av').textContent = initial(cleanName(q.n));
+  $('#j-cust').innerHTML = 'คุณ' + esc(cleanName(q.n)) + tagHTML(q.n);
+  $('#j-serv').textContent = `${TYPES[q.t] || q.t} · ${q.d} นาที · เริ่ม ${q.time}`;
+  const t = (D?.ctags || {})[q.n] || '';
+  $('#j-note').innerHTML = (q.note ? `<div class="note"><b>📝</b><span>${esc(q.note)}</span></div>` : '')
+    + (/แบล็ก|ระวัง|⛔|🚫/.test(t) ? `<div class="alertline">⚠️ ลูกค้ารายนี้มีประวัติ “${esc(t)}” — ถ้ามีปัญหากดเรียกแอดมินได้ทันที</div>` : '');
+  tick();
+}
+function tick() {
+  if (!started) return;
+  $('#clock').textContent = fmtT(now());
+  if (job && !$('#s-job').hidden) {
+    const total = job.d * 60000, end = job.startTime + total, left = end - now();
+    const ring = $('#ring'), C = 326.7;
+    ring.classList.toggle('low', left > 0 && left < 5 * 60000);
+    ring.classList.toggle('over', left <= 0);
+    if (left > total) { $('#left').textContent = fmtT(job.startTime); $('#left-l').textContent = 'เริ่มนวดเวลา'; $('#prog').style.strokeDashoffset = 0; }
+    else if (left > 0) {
+      const m = Math.floor(left / 60000), s = Math.floor(left % 60000 / 1000);
+      $('#left').textContent = `${m}:${pad(s)}`; $('#left-l').textContent = 'เวลาคงเหลือ';
+      $('#prog').style.strokeDashoffset = C * (1 - left / total);
+    } else {
+      const over = Math.floor(-left / 60000);
+      $('#left').textContent = 'หมดเวลา'; $('#left-l').textContent = over ? `เกินมา ${over} นาที` : 'ครบเวลาแล้ว'; $('#prog').style.strokeDashoffset = C;
+      if (!job._buzzed) { job._buzzed = true; chime(false); navigator.vibrate?.([300, 150, 300]); }
     }
+    $('#end').textContent = 'ครบเวลา ' + fmtT(end);
+  }
+  if (!$('#s-break').hidden) {
+    const at = Number(localStorage.getItem(LS.brk)) || now(), sec = Math.max(0, Math.floor((now() - at) / 1000));
+    $('#break-time').textContent = `${pad(Math.floor(sec / 60))}:${pad(sec % 60)}`;
+  }
+}
+function renderBreak() { if (!localStorage.getItem(LS.brk)) try { localStorage.setItem(LS.brk, String(now())); } catch (e) {} tick(); }
 
-    window.onload = async () => {
-        if(myName) {
-            showScreen('start-screen');
-            document.getElementById('dr-name-display').innerText = myName;
-        } else {
-            try {
-                let res = await fetch(SCRIPT_URL + "?type=light");
-                let data = await res.json();
-                let options = '<option value="" disabled selected>-- เลือกชื่อของคุณ --</option>';
-                data.drs.forEach(d => { options += `<option value="${d.n}">${d.n}</option>`; });
-                document.getElementById('dr-select').innerHTML = options;
-            } catch(e) { document.getElementById('dr-select').innerHTML = '<option value="" disabled>โหลดข้อมูลล้มเหลว รีเฟรชใหม่</option>'; }
-        }
-    };
+/* ---------- alarm ---------- */
+function startAlarm(q) {
+  job = q;
+  $('#a-cust').innerHTML = 'คุณ' + esc(cleanName(q.n)) + tagHTML(q.n);
+  $('#a-serv').textContent = `${TYPES[q.t] || q.t} · ${q.d} นาที`;
+  $('#a-time').textContent = q.time || '';
+  $('#a-note').textContent = q.note || ''; $('#a-note-row').hidden = !q.note;
+  if (!$('#alert').hidden) return;
+  $('#alert').hidden = false;
+  const ring = () => { chime(true); navigator.vibrate?.([500, 200, 500, 200, 500]); };
+  ring(); alarmT = setInterval(ring, 2200);
+}
+function stopAlarm() { clearInterval(alarmT); alarmT = null; navigator.vibrate?.(0); $('#alert').hidden = true; }
 
-    function login() {
-        let sel = document.getElementById('dr-select').value;
-        if(!sel) return alert('กรุณาเลือกชื่อ!');
-        myName = sel;
-        localStorage.setItem('pager_dr_name', myName);
-        document.getElementById('dr-name-display').innerText = myName;
-        showScreen('start-screen');
-    }
+/* ---------- actions ---------- */
+function logout() { localStorage.removeItem(LS.name); me = ''; started = false; clearInterval(pollT); stopAlarm(); renderLogin(); startPoll(); }
+function startPoll() { clearInterval(pollT); pollT = setInterval(() => { if (!document.hidden) pull(); }, POLL_MS); }
+const A = {
+  pick: ({ n }) => { me = n; localStorage.setItem(LS.name, n); $('#start-name').textContent = n; show('start'); },
+  logout: () => logout(),
+  start: () => { ctx(); chime(false); navigator.vibrate?.(120); keepAwake(); started = true; route(); pull(); },
+  ack: (_, btn) => {
+    const id = String(job.id); ackSent.add(id); stopAlarm(); renderJob(); show('job');
+    post('UPDATE_ACK', { id }).catch(() => { ackSent.delete(id); toast('ส่งรับทราบไม่สำเร็จ ลองใหม่', 'bad'); });
+  },
+  finish: () => {
+    tag = '👤 ปกติ'; $('#f-note').value = '';
+    document.querySelectorAll('.mood').forEach(m => m.classList.toggle('on', m.dataset.v === tag));
+    $('#f-cust').textContent = 'คุณ' + cleanName(job.n) + ' · ' + (TYPES[job.t] || job.t);
+    open('sh-finish');
+  },
+  mood: ({ v }, el) => { tag = v; document.querySelectorAll('.mood').forEach(m => m.classList.toggle('on', m === el)); },
+  qn: ({ v }) => { const t = $('#f-note'); t.value = t.value.trim() ? t.value.trim() + ', ' + v : v; },
+  confirmFinish: (_, btn) => busy(btn, async () => {
+    await post('FINISH_JOB', { id: job.id, note: $('#f-note').value.trim(), tag });
+    close('sh-finish'); job = null; toast('✓ จบงานเรียบร้อย เก่งมาก!', 'ok'); route(); pull();
+  }),
+  break: async (_, btn) => {
+    if (!await ask('☕', 'พักเบรก?', 'แอดมินจะยังไม่ลงคิวให้คุณ\nจนกว่าจะกดกลับมารับงาน', 'พักเบรก')) return;
+    busy(btn, async () => { try { localStorage.setItem(LS.brk, String(now())); } catch (e) {} await post('UPDATE_DR_STATUS', { dr: me, status: 'break' }); route(); });
+  },
+  back: (_, btn) => busy(btn, async () => { await post('UPDATE_DR_STATUS', { dr: me, status: 'free' }); try { localStorage.removeItem(LS.brk); } catch (e) {} toast('✓ กลับมารับงานแล้ว', 'ok'); route(); }),
+  call: async (_, btn) => {
+    if (!await ask('🆘', 'เรียกแอดมิน?', 'เครื่องแอดมินจะส่งเสียงเตือนทันที', 'เรียกเลย', 'btn-bad')) return;
+    busy(btn, async () => { await post('CALL_ADMIN', { dr: me, timeStr: fmtT(now()) }); toast('✓ เรียกแอดมินแล้ว รอสักครู่', 'ok'); });
+  },
+  history: () => {
+    const list = mine().filter(q => q.status === 'done').sort((a, b) => (b.doneTime || 0) - (a.doneTime || 0));
+    const total = list.reduce((a, q) => a + commOf(q), 0), mins = doneJobs().reduce((a, q) => a + (Number(q.d) || 0), 0);
+    $('#h-sub').textContent = `${doneJobs().length} คิว · ${Math.floor(mins / 60)} ชม. ${mins % 60} นาที`;
+    $('#hist').innerHTML = list.map(q => `<div class="card hrow"><div><b>${q.kind === 'ext' ? 'ต่อเวลา · ' : ''}คุณ${esc(cleanName(q.n))}</b><small>${esc(TYPES[q.t] || q.t)} ${q.d} นาที · ${esc(q.time || '')}${q.pm === 'course' ? ' · คอร์ส' : ''}</small></div><span class="num">${baht(commOf(q))}</span></div>`).join('')
+      || '<div class="empty">ยังไม่มีงานที่เสร็จวันนี้<br>สู้ๆ นะ 💪</div>';
+    $('#h-total').innerHTML = list.length ? `<div class="total"><span>ค่ามือรวมวันนี้</span><span class="num">${baht(total)}</span></div>` : '';
+    open('sh-hist');
+  },
+  close: (_, el) => close(el.closest('.sheet').id),
+  dlgOk: () => { const r = dlgResolve; dlgResolve = null; close('sh-dlg'); r && r(true); }
+};
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('sheet')) return close(e.target.id);
+  const el = e.target.closest('[data-act]'); if (!el) return;
+  const fn = A[el.dataset.act]; if (fn) fn({ ...el.dataset }, el);
+});
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { pull(); if (started) keepAwake(); } });
+window.addEventListener('online', () => pull());
+window.addEventListener('offline', () => net(false));
 
-    function logout() {
-        localStorage.removeItem('pager_dr_name');
-        location.reload();
-    }
-
-    function showScreen(id) {
-        ['login-screen', 'start-screen', 'standby-screen', 'active-job-screen', 'break-screen'].forEach(s => {
-            document.getElementById(s).style.display = (s === id) ? 'block' : 'none';
-        });
-    }
-
-    async function startPager() {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        audioCtx.resume();
-        try { if ('wakeLock' in navigator) await navigator.wakeLock.request('screen'); } catch (err) {}
-        if(navigator.vibrate) navigator.vibrate(200);
-
-        document.getElementById('dr-standby-name').innerText = "พนักงาน: " + myName;
-        showScreen('standby-screen');
-        pollData();
-        pollInterval = setInterval(pollData, 10000); 
-    }
-
-    async function pollData() {
-        try {
-            let res = await fetch(SCRIPT_URL + "?t=" + Date.now() + "&type=light");
-            let data = await res.json();
-            localQs = data.qs || []; 
-
-            let me = data.drs.find(d => d.n === myName);
-            if(me && me.st === 'break') {
-                showScreen('break-screen');
-                return;
-            }
-
-            let myJob = data.qs.find(q => q.dr === myName && q.status === 'active');
-
-            if(myJob) {
-                currentJobId = myJob.id;
-                if(!myJob.staffAck) {
-                    triggerAlert(myJob);
-                } else {
-                    document.getElementById('alert-screen').style.display = 'none';
-                    document.getElementById('act-cust').innerText = myJob.n;
-                    let tNames = { 'thai': 'นวดไทย', 'foot': 'นวดเท้า', 'back': 'รีดเส้น', 'oil': 'นวดน้ำมัน', 'spa': 'ขัดผิว', 'face': 'นวดหน้า', 'herb': 'อบสมุนไพร' };
-                    document.getElementById('act-serv').innerText = `${tNames[myJob.t] || myJob.t} (${myJob.d} นาที)`;
-                    document.getElementById('act-time').innerText = myJob.time;
-                    document.getElementById('act-note').innerText = myJob.note || "-";
-                    showScreen('active-job-screen');
-                    
-                    startCountdown(myJob.startTime, myJob.d);
-                }
-            } else {
-                document.getElementById('alert-screen').style.display = 'none';
-                stopCountdown();
-                showScreen('standby-screen');
-            }
-        } catch(e) { console.log('Sync Error'); }
-    }
-
-    function startCountdown(startTime, durationMins) {
-        if(countdownInterval) clearInterval(countdownInterval);
-        let endTime = startTime + (durationMins * 60000);
-        
-        countdownInterval = setInterval(() => {
-            let timeLeft = endTime - Date.now();
-            let timerEl = document.getElementById('job-timer');
-            
-            if(timeLeft <= 0) {
-                timerEl.innerText = "หมดเวลา!";
-                timerEl.style.color = "var(--danger)";
-                clearInterval(countdownInterval);
-            } else {
-                let m = Math.floor(timeLeft / 60000);
-                let s = Math.floor((timeLeft % 60000) / 1000);
-                timerEl.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-                timerEl.style.color = (m < 5) ? "var(--danger)" : "var(--success)"; 
-            }
-        }, 1000);
-    }
-
-    function stopCountdown() {
-        if(countdownInterval) clearInterval(countdownInterval);
-    }
-
-    function triggerAlert(job) {
-        if(document.getElementById('alert-screen').style.display === 'flex') return; 
-        
-        document.getElementById('a-cust').innerText = job.n;
-        let tNames = { 'thai': 'นวดไทย', 'foot': 'นวดเท้า', 'back': 'รีดเส้น', 'oil': 'นวดน้ำมัน', 'spa': 'ขัดผิว', 'face': 'นวดหน้า', 'herb': 'อบสมุนไพร' };
-        document.getElementById('a-serv').innerText = `${tNames[job.t] || job.t} (${job.d} นาที)`;
-        document.getElementById('a-time').innerText = job.time;
-        document.getElementById('a-note').innerText = job.note || "-";
-
-        document.getElementById('alert-screen').style.display = 'flex';
-        triggerFeedback();
-        alertInterval = setInterval(triggerFeedback, 2000);
-    }
-
-    function triggerFeedback() {
-        playAlertSound();
-        if(navigator.vibrate) navigator.vibrate([500, 200, 500, 200, 500]);
-    }
-
-    async function acknowledgeJob() {
-        clearInterval(alertInterval);
-        if(navigator.vibrate) navigator.vibrate(0);
-        document.getElementById('alert-screen').style.display = 'none';
-
-        fetch(SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify({ action: 'UPDATE_ACK', id: currentJobId })
-        });
-        pollData(); 
-    }
-
-    function takeBreak() {
-        if(!confirm("ต้องการพักเบรกใช่หรือไม่? แอดมินจะไม่สามารถลงคิวให้คุณได้")) return;
-        showScreen('break-screen');
-        fetch(SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify({ action: 'UPDATE_DR_STATUS', dr: myName, status: 'break' })
-        });
-    }
-
-    function backToWork() {
-        showScreen('standby-screen');
-        fetch(SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify({ action: 'UPDATE_DR_STATUS', dr: myName, status: 'free' })
-        });
-        alert("กลับมารับงานแล้ว!");
-    }
-
-    // 🚀 ระบบเลือก Emoji Tag แทน Dropdown
-    function selectEmojiTag(el, tagValue) {
-        document.querySelectorAll('.emoji-chip').forEach(c => c.classList.remove('active'));
-        el.classList.add('active');
-        document.getElementById('dr-cust-tag').value = tagValue;
-    }
-
-    function openFinishModal() {
-        document.getElementById('dr-note').value = "";
-        
-        // เซ็ตให้หน้ายิ้ม "ปกติ" เป็นค่าเริ่มต้นเสมอ
-        document.getElementById('dr-cust-tag').value = "👤 ปกติ";
-        let chips = document.querySelectorAll('.emoji-chip');
-        chips.forEach(c => c.classList.remove('active'));
-        chips[0].classList.add('active'); 
-        
-        document.getElementById('finish-modal').style.display = 'flex';
-    }
-
-    function confirmFinishJob() {
-        let noteTxt = document.getElementById('dr-note').value.trim();
-        let tagVal = document.getElementById('dr-cust-tag').value; // ดึงค่าจากช่องที่แอบซ่อนไว้
-        
-        document.getElementById('finish-modal').style.display = 'none';
-        showScreen('standby-screen'); 
-        stopCountdown();
-        
-        fetch(SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify({ action: 'FINISH_JOB', id: currentJobId, note: noteTxt, tag: tagVal })
-        });
-    }
-
-    function callAdmin() {
-        if(!confirm("ต้องการเรียกแอดมินมาที่ห้องนวดใช่หรือไม่?")) return;
-        let timeStr = new Date().toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'});
-        
-        fetch(SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify({ action: 'CALL_ADMIN', dr: myName, timeStr: timeStr })
-        });
-
-        const payload = {
-            embeds: [{
-                title: "🆘 มีพนักงานเรียกความช่วยเหลือด่วน!",
-                color: 16711680, 
-                fields: [
-                    { name: "พนักงานที่เรียก", value: myName, inline: true },
-                    { name: "เวลาที่เรียก", value: timeStr, inline: true }
-                ]
-            }]
-        };
-        fetch(DISCORD_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-        alert("ส่งการแจ้งเตือนเรียกแอดมินแล้ว โปรดรอสักครู่!");
-    }
-
-    function showMyWork() {
-        let myDoneJobs = localQs.filter(q => q.dr === myName && q.status === 'done');
-        let totalCust = myDoneJobs.length;
-        let totalMins = 0;
-        let totalComm = 0;
-
-        let tNames = { 'thai': 'นวดไทย', 'foot': 'นวดเท้า', 'back': 'รีดเส้น', 'oil': 'นวดน้ำมัน', 'spa': 'ขัดผิว', 'face': 'นวดหน้า', 'herb': 'อบสมุนไพร' };
-
-        let html = `<p style="text-align:center; font-size:18px; font-weight:bold;">สรุปยอดของ: ${myName}</p><hr>`;
-
-        if(totalCust === 0) {
-            html += `<p style="text-align:center; color:var(--text-muted);">ยังไม่มีงานที่เสร็จสิ้นในวันนี้</p>`;
-        } else {
-            myDoneJobs.forEach(q => {
-                totalMins += parseInt(q.d);
-                let c = 0;
-                if(q.pm === 'course' || (q.note && q.note.includes("คอร์ส"))) {
-                    c = (q.note && q.note.includes("รีดเส้น")) ? 300 : 200;
-                } else if(q.t === 'thai') c = (q.d / 60) * 100;
-                else if(q.t === 'herb') c = 50;
-                else c = q.p / 2;
-                totalComm += c;
-
-                html += `<div style="background:#f9f9f9; padding:8px; border-radius:8px; margin-bottom:8px;">
-                            <strong>คุณ ${q.n}</strong> - ${tNames[q.t]||q.t} (${q.d} น.)<br>
-                            <small style="color:var(--gold-dark);">ค่ามือประมาณ: ${c} ฿</small>
-                         </div>`;
-            });
-            html += `<hr>
-                     <p><strong>รวมลูกค้า:</strong> ${totalCust} คน</p>
-                     <p><strong>รวมเวลา:</strong> ${Math.floor(totalMins/60)} ชม. ${totalMins%60} น.</p>
-                     <p style="font-size:18px; color:var(--success); text-align:center;"><strong>ยอดเงินประเมิน: ${totalComm} ฿</strong></p>`;
-        }
-
-        document.getElementById('work-log-content').innerHTML = html;
-        document.getElementById('my-work-modal').style.display = 'flex';
-    }
+/* ---------- boot ---------- */
+setInterval(() => { $('#clock').textContent = fmtT(now()); if (started) tick(); }, 1000);
+$('#clock').textContent = fmtT(now());
+(async () => {
+  await pull();
+  if (!D) { $('#s-boot').innerHTML = '<div class="boot"><div style="text-align:center"><div class="mark" style="margin:0 auto 16px">✦</div><p class="sub">เชื่อมต่อระบบไม่ได้</p><button class="btn btn-ghost btn-sm" onclick="location.reload()">ลองใหม่</button></div></div>'; startPoll(); return; }
+  if (me) { $('#start-name').textContent = me; show('start'); }
+  startPoll();
+})();
 </script>
 </body>
 </html>

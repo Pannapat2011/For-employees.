@@ -98,6 +98,8 @@ h1,h2,h3{margin:0;font-weight:600}
 .next b{display:block;font-weight:600}
 .next small{color:var(--muted);font-size:13px}
 .actions{width:100%;display:flex;flex-direction:column;gap:10px}
+.turn{margin:6px 0 2px;font-size:16px;color:var(--ink2)}
+.turn b{font-family:'Kanit',sans-serif;font-size:34px;color:var(--gold2);font-weight:500;margin:0 4px;vertical-align:-4px}
 .break-time{font-size:56px;font-weight:500;color:var(--warn);line-height:1;margin:4px 0 6px}
 
 /* ---------- active job ---------- */
@@ -107,6 +109,7 @@ h1,h2,h3{margin:0;font-weight:600}
 .ring .prog{fill:none;stroke:url(#rg);stroke-width:12;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .4s}
 .ring.low .prog{stroke:var(--warn)}
 .ring.over .prog{stroke:var(--bad)}
+.ring.prep .prog{stroke:var(--info)}
 .ring-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
 .ring-c .left{font-size:58px;font-weight:500;line-height:1;color:var(--ink)}
 .ring.low .left{color:var(--warn)}
@@ -181,6 +184,47 @@ textarea:focus{border-color:var(--gold)}
 .boot{flex:1;display:grid;place-items:center}
 .boot .mark{width:64px;height:64px;font-size:30px;border-radius:20px;animation:breathe 1.6s ease-in-out infinite}
 @keyframes breathe{50%{transform:scale(.92);opacity:.7}}
+
+/* ---------- จอห้องพัก (เขียนให้ใช้ได้ถึง Safari iOS 9) ---------- */
+.rm{position:fixed;top:0;left:0;right:0;bottom:0;z-index:500;background:#0E0B07;background:radial-gradient(120% 80% at 50% 0%,#33250E 0%,#140F08 55%,#0B0804 100%);color:#F7EEDC;padding:3vmin 4vmin;overflow:hidden;font-size:3vmin}
+.rm-top{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:3vmin}
+.rm-brand{font-size:3.6vmin;font-weight:700;color:#E8C66E}
+.rm-brand small{font-size:2.4vmin;color:#8F8470;font-weight:500;margin-left:1.6vmin;letter-spacing:.1em}
+.rm-mark{display:inline-block;width:6vmin;height:6vmin;line-height:6vmin;text-align:center;border-radius:1.8vmin;background:#C9A24E;background:linear-gradient(135deg,#EED08A,#B8892B);color:#2a1d07;margin-right:1.6vmin;font-size:3vmin;vertical-align:middle}
+.rm-clock{font-family:'Kanit',sans-serif;font-size:6vmin;color:#fff;margin-left:2vmin;vertical-align:middle}
+.rm-btn{background:rgba(255,244,222,.07);border:1px solid rgba(232,198,110,.25);color:#CFC3AD;border-radius:999px;padding:1vmin 2.4vmin;font-size:2.2vmin;vertical-align:middle}
+.rm-body{display:-webkit-box;display:-webkit-flex;display:flex}
+.rm-col{-webkit-flex:1;flex:1;min-width:0}
+.rm-col+.rm-col{margin-left:4vmin}
+.rm h2{font-size:3vmin;color:#E8C66E;margin:0 0 1.6vmin;font-weight:600;letter-spacing:.04em}
+.rm h2 small{font-size:2.2vmin;color:#8F8470;font-weight:400;margin-left:1vmin}
+.rm-item{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;padding:1.8vmin 2.4vmin;margin-bottom:1.4vmin;border-radius:2.6vmin;background:rgba(255,244,222,.05);border:1px solid rgba(232,198,110,.14)}
+.rm-item.first{background:rgba(232,198,110,.16);border-color:rgba(232,198,110,.5)}
+.rm-no2{font-family:'Kanit',sans-serif;font-size:6vmin;color:#F3D489;width:9vmin;text-align:center;line-height:1}
+.rm-nm{-webkit-flex:1;flex:1;font-size:4.4vmin;font-weight:600;margin-left:1.6vmin}
+.rm-sub{font-size:2.4vmin;color:#8F8470;text-align:right}
+.rm-left{font-family:'Kanit',sans-serif;font-size:4.6vmin;color:#F7EEDC;text-align:right}
+.rm-left.low{color:#F2A93B}.rm-left.over{color:#FF6B5E}
+.rm-empty{color:#8F8470;font-size:2.6vmin;padding:2vmin 0}
+.rm-offs{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap}
+.rm-off{background:rgba(255,244,222,.05);border:1.5px dashed rgba(232,198,110,.3);color:#CFC3AD;border-radius:2.4vmin;padding:1.6vmin 2.6vmin;margin:0 1.4vmin 1.4vmin 0;font-size:3.2vmin;font-weight:600}
+.rm-off small{display:block;font-size:2vmin;color:#8F8470;font-weight:400}
+.rm-call{position:fixed;top:0;left:0;right:0;bottom:0;z-index:5;background:#3A270A;background:radial-gradient(circle at 50% 35%,#7A5513 0%,#2A1C08 60%,#120C04 100%);text-align:center;padding:5vmin;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;-webkit-animation:rmflash 1s infinite alternate;animation:rmflash 1s infinite alternate}
+@-webkit-keyframes rmflash{to{background-color:#5A3D0E}}
+@keyframes rmflash{to{filter:brightness(1.25)}}
+.rm-bell{font-size:16vmin;line-height:1;-webkit-animation:rmring 1s infinite;animation:rmring 1s infinite}
+@-webkit-keyframes rmring{0%,50%,100%{-webkit-transform:rotate(0)}10%{-webkit-transform:rotate(14deg)}20%{-webkit-transform:rotate(-12deg)}30%{-webkit-transform:rotate(8deg)}}
+@keyframes rmring{0%,50%,100%{transform:rotate(0)}10%{transform:rotate(14deg)}20%{transform:rotate(-12deg)}30%{transform:rotate(8deg)}}
+.rm-c1{font-size:5vmin;color:#E8C66E;margin-top:2vmin}
+.rm-c2{font-size:15vmin;font-weight:700;color:#fff;line-height:1.15}
+.rm-c3{font-size:3.8vmin;color:#F3D489;margin:1.6vmin 0 5vmin}
+.rm-ack{background:#C9A24E;background:linear-gradient(135deg,#F3D489,#B8892B);color:#24180A;border:0;border-radius:3vmin;padding:3vmin 7vmin;font-size:4.6vmin;font-weight:700;box-shadow:0 2vmin 6vmin rgba(232,198,110,.35)}
+.rm-no{background:rgba(255,255,255,.12);color:#F7EEDC;box-shadow:none}
+.rm-tap{position:fixed;top:0;left:0;right:0;bottom:0;z-index:6;background:rgba(8,6,3,.88);display:-webkit-box;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;text-align:center;padding:6vmin}
+.rm-tap b{display:block;font-size:6vmin;color:#F3D489;margin-top:2vmin}
+.rm-tap span{display:block;font-size:3.4vmin;color:#BDAF95;margin-top:1.4vmin}
+.rm-net{position:fixed;left:0;right:0;bottom:0;background:#FF6B5E;color:#fff;text-align:center;padding:1.4vmin;font-size:2.6vmin;font-weight:600;z-index:7}
+@media (orientation:portrait){.rm-body{display:block}.rm-col+.rm-col{margin:3vmin 0 0}.rm{overflow-y:auto}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
 </style>
 </head>
@@ -219,13 +263,27 @@ textarea:focus{border-color:var(--gold)}
     </div>
   </section>
 
+  <!-- check-in -->
+  <section class="screen" id="s-checkin" hidden>
+    <div class="hero">
+      <div class="orb"><i></i><i></i><i></i><div class="core">🕘</div></div>
+      <div class="eyebrow">ยังไม่ได้เช็คชื่อวันนี้</div>
+      <h1 class="title" id="ci-name"></h1>
+      <p class="sub">เช็คชื่อเพื่อเข้าคิวรับลูกค้า<br>มาก่อนได้คิวก่อน</p>
+    </div>
+    <div class="actions">
+      <button class="btn btn-gold btn-xl" data-act="checkin">✓ เช็คชื่อเข้างาน</button>
+      <button class="link" data-act="logout">ไม่ใช่ฉัน · เปลี่ยนชื่อ</button>
+    </div>
+  </section>
+
   <!-- standby -->
   <section class="screen" id="s-standby" hidden>
     <div class="hero" style="padding-bottom:6px">
       <div class="orb ok"><i></i><i></i><i></i><div class="core">💆</div></div>
       <span class="status ok"><span class="dot"></span>พร้อมรับงาน</span>
       <h1 class="title" id="sb-name"></h1>
-      <p class="sub">วางหน้านี้ไว้ได้เลย ระบบจะสั่นและส่งเสียงเมื่อมีคิว</p>
+      <div class="turn" id="sb-turn"></div>
       <div class="stats">
         <div class="card stat"><b class="num" id="st-jobs">0</b><span>คิววันนี้</span></div>
         <div class="card stat"><b class="num" id="st-hours">0</b><span>ชั่วโมง</span></div>
@@ -282,7 +340,7 @@ textarea:focus{border-color:var(--gold)}
   <div class="card">
     <div class="kv"><span>ลูกค้า</span><b id="a-cust"></b></div>
     <div class="kv"><span>บริการ</span><b id="a-serv"></b></div>
-    <div class="kv"><span>เริ่ม</span><b class="num" id="a-time"></b></div>
+    <div class="kv"><span>เริ่มนวด</span><b class="num" id="a-time"></b></div>
     <div class="kv" id="a-note-row"><span>หมายเหตุ</span><b id="a-note" style="color:var(--warn)"></b></div>
   </div>
   <button class="btn btn-gold btn-xl" data-act="ack">✓ รับทราบงาน</button>
@@ -335,8 +393,188 @@ textarea:focus{border-color:var(--gold)}
   <div class="row"><button class="btn btn-ghost btn-sm" data-act="close">ยกเลิก</button><button class="btn btn-gold btn-sm" id="d-ok" data-act="dlgOk">ยืนยัน</button></div>
 </div></div>
 
+
+<!-- ═════════════ จอเรียกหมอ ห้องพัก (?mode=room) ═════════════ -->
+<div id="room" class="rm" style="display:none">
+  <div class="rm-top">
+    <div class="rm-brand"><span class="rm-mark">✦</span><span id="rm-shop">บ้านประคบทอง</span><small>จอเรียกหมอ</small></div>
+    <div class="rm-right"><button class="rm-btn" id="rm-voice">🔊 เสียงเรียกชื่อ: เปิด</button><span class="rm-clock" id="rm-clock">--:--</span></div>
+  </div>
+  <div class="rm-body">
+    <div class="rm-col">
+      <h2>คิวรับลูกค้า <small>มาก่อนได้ก่อน</small></h2>
+      <div id="rm-rot"></div>
+    </div>
+    <div class="rm-col">
+      <h2>กำลังนวด</h2>
+      <div id="rm-busy"></div>
+      <h2 style="margin-top:3vmin">ยังไม่เช็คชื่อ / พัก <small>แตะชื่อเพื่อเข้าคิว</small></h2>
+      <div id="rm-off" class="rm-offs"></div>
+    </div>
+  </div>
+  <div id="rm-call" class="rm-call" style="display:none">
+    <div class="rm-bell">📣</div>
+    <div class="rm-c1">เชิญ</div>
+    <div class="rm-c2" id="rm-cdr"></div>
+    <div class="rm-c3" id="rm-cjob"></div>
+    <button class="rm-ack" id="rm-ack">รับทราบ ไปเตรียมห้อง</button>
+  </div>
+  <div id="rm-tap" class="rm-tap"><div><div style="font-size:16vmin">👆</div><b>แตะหน้าจอ 1 ครั้ง</b><span>เพื่อเปิดเสียงเรียกหมอ</span></div></div>
+  <div id="rm-confirm" class="rm-tap" style="display:none"><div><b id="rm-cf-t"></b><span id="rm-cf-m"></span><div style="margin-top:4vmin"><button class="rm-ack rm-no" id="rm-cf-no">ยกเลิก</button> <button class="rm-ack" id="rm-cf-ok">ยืนยัน</button></div></div></div>
+  <div id="rm-off-net" class="rm-net" style="display:none">⚠️ ขาดการเชื่อมต่อ กำลังลองใหม่…</div>
+</div>
+<script>
+/* ═════════════ จอเรียกหมอ ห้องพัก (?mode=room) — ES5 ล้วน ใช้กับ iPad รุ่นเก่าได้ ═════════════ */
+var ROOM_URL = "https://script.google.com/macros/s/AKfycbylXf_kfZmAo2qN2UTnF4NpIfUhadHRflMLr2CAkqOXLI8rlTnBTRoVtyYty_IX1MH6/exec";
+(function () {
+  if (!/[?&]mode=room(&|$)/.test(location.search)) return;
+  window.__ROOM = true;
+  var TN = { thai: 'นวดไทย', foot: 'นวดเท้า', back: 'นวดไทยรีดเส้น', oil: 'นวดน้ำมัน', spa: 'ขัดผิวกาย', face: 'นวดหน้า', herb: 'อบสมุนไพร' };
+  var D = null, off = 0, calling = null, callT = null, actx = null, voiceOn = true, cfAction = null, busyPost = false;
+  try { voiceOn = localStorage.getItem('room_voice') !== '0'; } catch (e) {}
+  function $(id) { return document.getElementById(id); }
+  function vis(id, on, mode) { $(id).style.display = on ? (mode || 'block') : 'none'; }
+  function now() { return new Date().getTime() + off; }
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function hm(ms) { var d = new Date(ms); return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function clean(n) { return String(n || '').replace(/^\[.*?\]\s*/, ''); }
+  function active(n) { var qs = D.qs || []; for (var i = 0; i < qs.length; i++) if (qs[i].dr === n && qs[i].status === 'active') return qs[i]; return null; }
+
+  /* ---- เสียง ---- */
+  function ctx() { if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (actx && actx.resume) try { actx.resume(); } catch (e) {} return actx; }
+  function startN(n, t) { if (n.start) n.start(t); else n.noteOn(t); }
+  function stopN(n, t) { if (n.stop) n.stop(t); else n.noteOff(t); }
+  function dingdong() {
+    var c = ctx(); if (!c) return;
+    var t0 = c.currentTime + 0.02;
+    [[1318.5, 0], [987.8, 0.45], [1318.5, 1.1], [987.8, 1.55]].forEach(function (n) {
+      var o = c.createOscillator(), g = c.createGain();
+      o.type = 'sine'; o.frequency.value = n[0]; o.connect(g); g.connect(c.destination);
+      var s = t0 + n[1];
+      g.gain.setValueAtTime(0.0001, s); g.gain.exponentialRampToValueAtTime(0.8, s + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, s + 1.2);
+      startN(o, s); stopN(o, s + 1.25);
+    });
+  }
+  function say(text) {
+    if (!voiceOn || !window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
+    try {
+      speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(text); u.lang = 'th-TH'; u.rate = 0.85; u.volume = 1;
+      var vs = speechSynthesis.getVoices() || [];
+      for (var i = 0; i < vs.length; i++) if (/^th/i.test(vs[i].lang)) { u.voice = vs[i]; break; }
+      speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  function updVoiceBtn() { $('rm-voice').innerHTML = (voiceOn ? '🔊' : '🔈') + ' เสียงเรียกชื่อ: ' + (voiceOn ? 'เปิด' : 'ปิด'); }
+
+  /* ---- เครือข่าย ---- */
+  function xhr(method, url, body, cb) {
+    var x = new XMLHttpRequest(); x.open(method, url, true); x.timeout = 20000;
+    if (body) x.setRequestHeader('Content-Type', 'text/plain;charset=utf-8');
+    x.onload = function () { var j = null; try { j = JSON.parse(x.responseText); } catch (e) {} cb(j ? null : new Error('bad'), j); };
+    x.onerror = x.ontimeout = function () { cb(new Error('net')); };
+    x.send(body || null);
+  }
+  function apply(j) { if (!j || !j.drs) return; if (j.now) off = j.now - new Date().getTime(); D = j; render(); }
+  function pull() {
+    xhr('GET', ROOM_URL + '?type=light&t=' + new Date().getTime(), null, function (err, j) {
+      vis('rm-off-net', !!err);
+      if (!err) apply(j);
+    });
+  }
+  function post(data, cb) {
+    xhr('POST', ROOM_URL, JSON.stringify(data), function (err, j) {
+      if (!err && j && j.ok === false) err = new Error(j.msg || 'error');
+      if (!err) apply(j);
+      cb && cb(err, j);
+    });
+  }
+
+  /* ---- แสดงผล ---- */
+  function render() {
+    if (!D) return;
+    if (D.cfg && D.cfg.shop && D.cfg.shop.name) $('rm-shop').innerHTML = esc(D.cfg.shop.name);
+    var drs = D.drs || [], rot = [], busy = [], offs = [];
+    drs.forEach(function (d) {
+      var q = active(d.n);
+      if (q) busy.push({ d: d, q: q });
+      else if (d.in && d.st === 'free') rot.push(d);
+      else offs.push(d);
+    });
+    rot.sort(function (a, b) { return (a.turnAt || 0) - (b.turnAt || 0); });
+    busy.sort(function (a, b) { return (a.q.startTime + a.q.d * 60000) - (b.q.startTime + b.q.d * 60000); });
+    $('rm-rot').innerHTML = rot.length ? rot.map(function (d, i) {
+      return '<div class="rm-item' + (i === 0 ? ' first' : '') + '"><div class="rm-no2">' + (i + 1) + '</div><div class="rm-nm">' + esc(d.n) + '</div><div class="rm-sub">' + (i === 0 ? 'คิวถัดไป' : 'รอ ' + i + ' คน') + '</div></div>';
+    }).join('') : '<div class="rm-empty">ยังไม่มีหมอในคิว — แตะชื่อด้านขวาเพื่อเช็คชื่อ</div>';
+    var t = now();
+    $('rm-busy').innerHTML = busy.length ? busy.map(function (b) {
+      var q = b.q, left = Math.ceil((q.startTime + q.d * 60000 - t) / 60000), pre = q.startTime > t;
+      var txt = pre ? 'เริ่ม ' + hm(q.startTime) : left > 0 ? 'เหลือ ' + left + ' น.' : 'เกิน ' + (-left) + ' น.';
+      var cls = pre ? '' : left <= 0 ? ' over' : left <= 5 ? ' low' : '';
+      return '<div class="rm-item"><div class="rm-nm" style="margin:0">' + esc(b.d.n) + '<div class="rm-sub" style="text-align:left">' + esc(clean(q.n)) + ' · ' + esc(TN[q.t] || q.t) + '</div></div><div class="rm-left' + cls + '">' + txt + '</div></div>';
+    }).join('') : '<div class="rm-empty">ยังไม่มี</div>';
+    $('rm-off').innerHTML = offs.length ? offs.map(function (d) {
+      return '<button class="rm-off" data-n="' + esc(d.n) + '" data-st="' + d.st + '">' + esc(d.n) + '<small>' + (d.st === 'break' ? 'พักเบรก · แตะเพื่อกลับเข้าคิว' : 'แตะเพื่อเช็คชื่อ') + '</small></button>';
+    }).join('') : '<div class="rm-empty">ทุกคนเข้างานแล้ว</div>';
+    // คิวที่ยังไม่มีใครรับทราบ
+    var pending = null, qs = D.qs || [];
+    for (var i = 0; i < qs.length; i++) { var q = qs[i]; if (q.status === 'active' && !q.staffAck && q.kind !== 'ext' && q.dr && q.dr !== '-') { pending = q; break; } }
+    if (pending) startCall(pending); else stopCall();
+  }
+  function startCall(q) {
+    $('rm-cdr').innerHTML = esc(q.dr);
+    $('rm-cjob').innerHTML = 'ลูกค้า คุณ' + esc(clean(q.n)) + ' · ' + esc(TN[q.t] || q.t) + ' ' + q.d + ' นาที · เริ่ม ' + esc(q.time || '');
+    if (calling === q.id) return;
+    calling = q.id;
+    vis('rm-call', true, '-webkit-flex'); $('rm-call').style.display = 'flex';
+    var ring = function () { dingdong(); setTimeout(function () { say('เชิญ ' + q.dr + ' รับลูกค้าค่ะ'); }, 1700); };
+    ring(); clearInterval(callT); callT = setInterval(ring, 9000);
+  }
+  function stopCall() {
+    if (!calling) return;
+    calling = null; clearInterval(callT); vis('rm-call', false);
+    try { speechSynthesis.cancel(); } catch (e) {}
+  }
+  function ask(t, m, fn) { $('rm-cf-t').innerHTML = esc(t); $('rm-cf-m').innerHTML = esc(m); cfAction = fn; $('rm-confirm').style.display = 'flex'; }
+
+  function start() {
+    document.body.style.overflow = 'hidden';
+    var app = document.querySelector('.app'); if (app) app.style.display = 'none';
+    $('room').style.display = 'block';
+    updVoiceBtn();
+    setInterval(function () { $('rm-clock').innerHTML = hm(now()); }, 1000);
+    $('rm-clock').innerHTML = hm(now());
+    $('rm-tap').onclick = function () {
+      ctx(); dingdong(); vis('rm-tap', false);
+      var de = document.documentElement, rf = de.requestFullscreen || de.webkitRequestFullscreen; if (rf) try { var r = rf.call(de); if (r && r['catch']) r['catch'](function () {}); } catch (e) {}
+      try { if (navigator.wakeLock) navigator.wakeLock.request('screen')['catch'](function () {}); } catch (e) {}
+    };
+    $('rm-voice').onclick = function () { voiceOn = !voiceOn; try { localStorage.setItem('room_voice', voiceOn ? '1' : '0'); } catch (e) {} updVoiceBtn(); if (voiceOn) say('ทดสอบเสียงเรียกหมอ'); };
+    $('rm-ack').onclick = function () {
+      if (!calling || busyPost) return;
+      var q = null; (D.qs || []).forEach(function (x) { if (x.id === calling) q = x; });
+      if (!q) return stopCall();
+      busyPost = true; var id = calling; stopCall();
+      post({ action: 'UPDATE_ACK', id: id, dr: q.dr }, function () { busyPost = false; });
+    };
+    $('rm-off').onclick = function (e) {
+      var el = e.target; while (el && el !== this && !el.getAttribute('data-n')) el = el.parentNode;
+      if (!el || el === this) return;
+      var n = el.getAttribute('data-n'), st = el.getAttribute('data-st');
+      if (st === 'break') ask('กลับเข้าคิว?', n + ' กลับมารับงาน', function () { post({ action: 'UPDATE_DR_STATUS', dr: n, status: 'free' }); });
+      else ask('เช็คชื่อเข้างาน?', n + ' จะต่อท้ายคิวรับลูกค้า', function () { post({ action: 'CHECKIN', dr: n }); });
+    };
+    $('rm-cf-no').onclick = function () { $('rm-confirm').style.display = 'none'; cfAction = null; };
+    $('rm-cf-ok').onclick = function () { $('rm-confirm').style.display = 'none'; var f = cfAction; cfAction = null; if (f) f(); };
+    pull(); setInterval(pull, 4000); setInterval(render, 20000);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();
+</script>
 <script>
 'use strict';
+if (window.__ROOM) throw new Error('room mode');
 /* ════════════════════════════════════════════════════════════════
    ตั้งค่า — ต้องเป็นลิงก์ Web App เดียวกับหน้าแอดมิน (Code.gs v3 ขึ้นไป)
    ════════════════════════════════════════════════════════════════ */
@@ -432,6 +670,8 @@ function route() {
   }
   job = null; stopAlarm();
   if (myStatus() === 'break') { renderBreak(); return show('break'); }
+  const meDr = (D?.drs || []).find(d => d.n === me);
+  if (meDr && (meDr.in === false || meDr.st === 'off')) { $('#ci-name').textContent = me; return show('checkin'); }
   try { localStorage.removeItem(LS.brk); } catch (e) {}
   renderStandby(); show('standby');
 }
@@ -453,6 +693,9 @@ function commOf(q) {
 function doneJobs() { return mine().filter(q => q.status === 'done' && q.kind !== 'ext' && q.kind !== 'reg'); }
 function renderStandby() {
   $('#sb-name').textContent = me;
+  const rot = (D?.drs || []).filter(d => d.in && d.st === 'free' && !(D.qs || []).some(q => q.dr === d.n && q.status === 'active')).sort((a, b) => (a.turnAt || 0) - (b.turnAt || 0));
+  const k = rot.findIndex(d => d.n === me) + 1;
+  $('#sb-turn').innerHTML = k ? (k === 1 ? 'คุณได้คิว<b>ถัดไป</b> เตรียมตัวได้เลย' : `คุณอยู่คิวที่<b>${k}</b>รออีก ${k - 1} คน`) : '';
   const done = doneJobs(), all = mine().filter(q => q.status === 'done');
   const mins = done.reduce((a, q) => a + (Number(q.d) || 0), 0);
   $('#st-jobs').textContent = done.length;
@@ -485,7 +728,11 @@ function tick() {
     const ring = $('#ring'), C = 326.7;
     ring.classList.toggle('low', left > 0 && left < 5 * 60000);
     ring.classList.toggle('over', left <= 0);
-    if (left > total) { $('#left').textContent = fmtT(job.startTime); $('#left-l').textContent = 'เริ่มนวดเวลา'; $('#prog').style.strokeDashoffset = 0; }
+    ring.classList.toggle('prep', left > total);
+    if (left > total) {
+      const w = job.startTime - now(), m = Math.floor(w / 60000), sec = Math.floor(w % 60000 / 1000);
+      $('#left').textContent = `${m}:${pad(sec)}`; $('#left-l').textContent = 'เตรียมห้อง · เริ่มนวดใน'; $('#prog').style.strokeDashoffset = 0;
+    }
     else if (left > 0) {
       const m = Math.floor(left / 60000), s = Math.floor(left % 60000 / 1000);
       $('#left').textContent = `${m}:${pad(s)}`; $('#left-l').textContent = 'เวลาคงเหลือ';
@@ -509,7 +756,7 @@ function startAlarm(q) {
   job = q;
   $('#a-cust').innerHTML = 'คุณ' + esc(cleanName(q.n)) + tagHTML(q.n);
   $('#a-serv').textContent = `${TYPES[q.t] || q.t} · ${q.d} นาที`;
-  $('#a-time').textContent = q.time || '';
+  $('#a-time').textContent = (q.time || '') + (q.req ? ' · ลูกค้าขอตัว' : '');
   $('#a-note').textContent = q.note || ''; $('#a-note-row').hidden = !q.note;
   if (!$('#alert').hidden) return;
   $('#alert').hidden = false;
@@ -525,9 +772,13 @@ const A = {
   pick: ({ n }) => { me = n; localStorage.setItem(LS.name, n); $('#start-name').textContent = n; show('start'); },
   logout: () => logout(),
   start: () => { ctx(); chime(false); navigator.vibrate?.(120); keepAwake(); started = true; route(); pull(); },
+  checkin: (_, btn) => busy(btn, async () => {
+    const j = await post('CHECKIN', { dr: me });
+    toast(j.out?.already ? 'เช็คชื่อแล้ว ' + (j.out.time || '') : '✓ เช็คชื่อแล้ว ' + (j.out?.time || ''), 'ok'); route();
+  }),
   ack: (_, btn) => {
     const id = String(job.id); ackSent.add(id); stopAlarm(); renderJob(); show('job');
-    post('UPDATE_ACK', { id }).catch(() => { ackSent.delete(id); toast('ส่งรับทราบไม่สำเร็จ ลองใหม่', 'bad'); });
+    post('UPDATE_ACK', { id, dr: me }).catch(() => { ackSent.delete(id); toast('ส่งรับทราบไม่สำเร็จ ลองใหม่', 'bad'); });
   },
   finish: () => {
     tag = '👤 ปกติ'; $('#f-note').value = '';

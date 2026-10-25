@@ -11,6 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Kanit:wght@300;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <style>
 :root{
   --bg:#0E0B07;--bg2:#17120B;--card:rgba(255,244,222,.045);--card2:rgba(255,244,222,.075);--line:rgba(232,198,110,.14);--line2:rgba(232,198,110,.28);
@@ -266,6 +267,55 @@ textarea:focus{border-color:var(--gold)}
 .sw::before{content:'';position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:.25s}
 .sw:checked{background:var(--ok)}.sw:checked::before{left:25px}
 body.big .app,body.big .panel,body.big .alert{zoom:1.15}
+/* ---------- v4.0 ---------- */
+.shift{margin:4px 0 0;font-size:15px;color:var(--ink2)}.shift b{font-family:'Kanit',sans-serif;color:var(--gold2);font-weight:500}
+.shift.late{color:var(--bad)}.shift.late b{color:var(--bad)}.shift.ok{color:var(--ok)}
+.eta{font-size:14px;color:var(--muted);margin-top:2px}
+.swipe{position:relative;width:100%;max-width:400px;height:72px;border-radius:999px;background:rgba(232,198,110,.14);border:1.5px solid var(--line2);overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+.swipe .sw-fill{position:absolute;left:0;top:0;bottom:0;width:72px;border-radius:999px;background:linear-gradient(90deg,rgba(243,212,137,.35),rgba(184,137,43,.25))}
+.swipe .sw-t{position:absolute;inset:0;display:grid;place-items:center;font-weight:600;font-size:18px;color:var(--gold2);padding-left:60px;pointer-events:none;animation:shimmer 2s infinite}
+@keyframes shimmer{50%{opacity:.45}}
+.swipe .sw-k{position:absolute;left:4px;top:4px;width:62px;height:62px;border-radius:50%;display:grid;place-items:center;font-size:26px;color:#24180A;background:linear-gradient(135deg,#F3D489,#B8892B);box-shadow:0 6px 20px rgba(232,198,110,.4);cursor:grab}
+.swipe.done .sw-k{background:var(--ok)}
+.decl-link{color:var(--muted);font-size:14px;margin-top:14px;text-decoration:underline;text-underline-offset:4px;padding:8px}
+.health{margin-top:10px;padding:12px 14px;border-radius:14px;background:var(--bad-soft);border:1.5px solid rgba(255,107,94,.5);color:#FFB4A8;font-size:15.5px;font-weight:600;display:flex;gap:10px;text-align:left}
+.health b{color:var(--bad)}
+.clean-t{font-size:44px;font-weight:500;color:var(--info);line-height:1;margin:4px 0 4px}
+.grid-menu{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+.gm{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:16px;border-radius:20px;background:var(--card);border:1px solid var(--line);text-align:left;position:relative}
+.gm em{font-style:normal;font-size:26px}.gm b{font-weight:600}.gm small{color:var(--muted);font-size:12.5px}
+.gm .dotn{position:absolute;top:12px;right:12px;min-width:20px;height:20px;border-radius:10px;background:var(--bad);color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center;padding:0 6px}
+.lst{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.li{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-radius:16px;background:var(--card);border:1px solid var(--line)}
+.li b{display:block;font-weight:600}.li small{color:var(--muted);font-size:13px}
+.st-p{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.st-p.pending{background:var(--warn-soft);color:var(--warn)}.st-p.ok{background:var(--ok-soft);color:var(--ok)}.st-p.no{background:var(--bad-soft);color:var(--bad)}
+.dates{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dates label span{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
+.inp.sm{font-size:16px;height:48px}
+.rank{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--line)}
+.rank:last-child{border:0}
+.rank .no{width:30px;font-family:'Kanit',sans-serif;font-size:20px;color:var(--gold2);text-align:center}
+.rank b{flex:1;font-weight:600}.rank.me{background:rgba(232,198,110,.1);border-radius:12px}
+.medals{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.medal{padding:8px 12px;border-radius:14px;background:rgba(232,198,110,.14);border:1px solid var(--line2);font-size:14px;color:var(--gold2);font-weight:600}
+.slip{padding:16px;border-radius:20px;background:linear-gradient(135deg,rgba(232,198,110,.16),rgba(184,137,43,.05));border:1px solid var(--line2);margin-top:10px}
+.slip .kv{font-size:15px}
+.qrbig{display:block;width:min(74vw,300px);height:min(74vw,300px);margin:14px auto;background:#fff;padding:12px;border-radius:22px;image-rendering:pixelated}
+.cam{position:relative;width:100%;aspect-ratio:3/4;max-height:60vh;border-radius:22px;overflow:hidden;background:#000;margin-top:12px}
+.cam video{width:100%;height:100%;object-fit:cover;display:block}
+.cam .fr{position:absolute;left:50%;top:50%;width:64%;aspect-ratio:1;transform:translate(-50%,-50%);border:3px solid #fff;border-radius:22px;box-shadow:0 0 0 999px rgba(0,0,0,.45)}
+.cam .fr.face{border-radius:50%;width:70%;aspect-ratio:3/4}
+.cam-st{text-align:center;color:var(--ink2);margin:12px 0 4px;min-height:24px}
+.mic{min-height:46px;margin-top:8px}
+.mic.rec{background:var(--bad);color:#fff;animation:blink 1s infinite}
+.clean-list .pi{color:var(--ink);border-bottom-color:var(--line);font-size:16px;padding:12px 4px}
+/* โหมดง่าย (㊳) */
+body.simple .stats,body.simple #goal,body.simple .hide-simple,body.simple #j-brief,body.simple #j-comm,body.simple #j-prep{display:none!important}
+body.simple .title{font-size:34px}
+body.simple .btn{min-height:76px;font-size:22px;border-radius:24px}
+body.simple .turn{font-size:20px}
+body.simple .link{font-size:17px}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
 </style>
 </head>
@@ -312,9 +362,11 @@ body.big .app,body.big .panel,body.big .alert{zoom:1.15}
       <div class="eyebrow">ยังไม่ได้เช็คชื่อวันนี้</div>
       <h1 class="title" id="ci-name"></h1>
       <p class="sub">เช็คชื่อเพื่อเข้าคิวรับลูกค้า<br>มาก่อนได้คิวก่อน</p>
+      <div class="shift" id="ci-shift"></div>
     </div>
     <div class="actions">
-      <button class="btn btn-gold btn-xl" data-act="checkin">✓ เช็คชื่อเข้างาน</button>
+      <button class="btn btn-gold btn-xl" data-act="checkin" id="ci-btn">✓ เช็คชื่อเข้างาน</button>
+      <button class="btn btn-ghost btn-sm hide-simple" data-act="menu">📝 ขอลา / เมนูของฉัน</button>
       <button class="link" data-act="logout">ไม่ใช่ฉัน · เปลี่ยนชื่อ</button>
     </div>
   </section>
@@ -326,6 +378,7 @@ body.big .app,body.big .panel,body.big .alert{zoom:1.15}
       <span class="status ok"><span class="dot"></span>พร้อมรับงาน</span>
       <h1 class="title" id="sb-name"></h1>
       <div class="turn" id="sb-turn"></div>
+      <div class="eta" id="sb-eta"></div>
       <div class="stats">
         <div class="card stat"><b class="num" id="st-jobs">0</b><span>คิววันนี้</span></div>
         <div class="card stat"><b class="num" id="st-hours">0</b><span>ชั่วโมง</span></div>
@@ -337,8 +390,9 @@ body.big .app,body.big .panel,body.big .alert{zoom:1.15}
     <div class="actions">
       <div class="row">
         <button class="btn btn-ghost btn-sm" data-act="break">☕ พักเบรก</button>
-        <button class="btn btn-ghost btn-sm" data-act="history">📊 งานของฉัน</button>
+        <button class="btn btn-ghost btn-sm hide-simple" data-act="history">📊 งานของฉัน</button>
       </div>
+      <button class="btn btn-ghost btn-sm hide-simple" data-act="menu" id="menu-btn">☰ เมนูของฉัน · ลา · เบิก · สลิป · ทิป</button>
       <button class="btn btn-bad btn-sm" data-act="call">📨 ส่งคำขอถึงแอดมิน</button>
       <button class="link" data-act="endShift">🏁 เลิกงานวันนี้</button>
     </div>
@@ -357,6 +411,20 @@ body.big .app,body.big .panel,body.big .alert{zoom:1.15}
     </div>
   </section>
 
+  <!-- clean room (㊲) -->
+  <section class="screen" id="s-clean" hidden>
+    <div class="hero" style="padding-bottom:10px">
+      <div class="orb"><i></i><i></i><i></i><div class="core">🧹</div></div>
+      <span class="status warn" style="color:var(--info);background:rgba(122,168,255,.14)"><span class="dot"></span>เก็บห้องก่อนรับคิวใหม่</span>
+      <div class="clean-t num" id="clean-t">0:00</div>
+      <p class="sub">ติ๊กให้ครบทุกข้อ แล้วกดพร้อมรับงาน</p>
+    </div>
+    <div class="card prepbox clean-list" id="clean-list"></div>
+    <div class="actions">
+      <button class="btn btn-ok btn-xl" data-act="cleanDone" id="clean-btn" disabled style="opacity:.45">✓ เก็บห้องเสร็จ พร้อมรับงาน</button>
+    </div>
+  </section>
+
   <!-- active job -->
   <section class="screen" id="s-job" hidden>
     <div style="text-align:center"><span class="status warn" style="color:var(--gold2);background:rgba(232,198,110,.14)"><span class="dot"></span>กำลังให้บริการ</span></div>
@@ -368,6 +436,7 @@ body.big .app,body.big .panel,body.big .alert{zoom:1.15}
     <div class="card job">
       <div class="job-h"><div class="av" id="j-av">ค</div><div><b id="j-cust"></b><span id="j-serv"></span></div></div>
       <div id="j-note"></div>
+      <div id="j-health"></div>
       <div id="j-brief"></div>
       <div id="j-comm"></div>
       <div id="j-ext"></div>
@@ -392,10 +461,12 @@ body.big .app,body.big .panel,body.big .alert{zoom:1.15}
     <div class="kv"><span>บริการ</span><b id="a-serv"></b></div>
     <div class="kv"><span>เริ่มนวด</span><b class="num" id="a-time"></b></div>
     <div class="kv" id="a-note-row"><span>หมายเหตุ</span><b id="a-note" style="color:var(--warn)"></b></div>
+    <div id="a-health"></div>
     <div id="a-brief"></div>
   </div>
   <p class="a-esc" id="a-esc"></p>
-  <button class="btn btn-gold btn-xl" data-act="ack">✓ รับทราบงาน</button>
+  <div class="swipe" id="swipe"><div class="sw-fill" id="sw-fill"></div><div class="sw-t">ปัดไปทางขวาเพื่อรับคิว ›››</div><div class="sw-k" id="sw-k">›</div></div>
+  <button class="decl-link" data-act="decline">ไม่สะดวกรับคิวนี้</button>
 </div>
 
 <!-- finish sheet -->
@@ -413,6 +484,7 @@ body.big .app,body.big .panel,body.big .alert{zoom:1.15}
   <div class="field-l">บันทึกถึงคนต่อไป (ไม่บังคับ)</div>
   <div class="chips" id="f-chips"></div>
   <textarea id="f-note" placeholder="พิมพ์เพิ่มเติม…"></textarea>
+  <button class="btn btn-ghost btn-sm mic" data-act="micNote" id="f-mic">🎙️ กดแล้วพูดบันทึก (ไม่ต้องพิมพ์)</button>
   <div class="actions" style="margin-top:18px">
     <button class="btn btn-ok btn-xl" data-act="confirmFinish">ส่งข้อมูลและจบงาน</button>
     <button class="btn btn-ghost btn-sm" data-act="close">ยกเลิก</button>
@@ -449,10 +521,93 @@ body.big .app,body.big .panel,body.big .alert{zoom:1.15}
   <div class="field-l">แจ้งเตือนเด้งเข้ามือถือ</div>
   <div class="push-st" id="push-st"></div>
   <button class="btn btn-ghost btn-sm" data-act="testPush" style="margin-top:10px">🔔 ส่งแจ้งเตือนทดสอบมาที่เครื่องนี้</button>
+  <div class="srow"><div><b>โหมดง่ายสุด</b><small>เหลือแต่ปุ่มใหญ่ที่จำเป็น + พูดบอกทุกอย่าง</small></div><input type="checkbox" class="sw" id="set-simple"></div>
   <div class="srow"><div><b>ตัวหนังสือใหญ่</b><small>อ่านง่ายขึ้น</small></div><input type="checkbox" class="sw" id="set-big"></div>
   <div class="srow"><div><b>อ่านออกเสียงคิวใหม่</b><small>พูดชื่อลูกค้าและบริการให้ฟัง</small></div><input type="checkbox" class="sw" id="set-tts"></div>
   <div class="srow"><div><b>แจ้งเตือนของระบบ</b><small>เด้งแจ้งเตือนเมื่อเปิดแอปอื่นอยู่ (ถ้าเครื่องรองรับ)</small></div><input type="checkbox" class="sw" id="set-notify"></div>
   <button class="btn btn-gold btn-sm" data-act="saveSet" style="margin-top:16px">บันทึก</button>
+</div></div>
+
+<!-- decline (㉘) -->
+<div class="sheet" id="sh-decl" hidden><div class="panel">
+  <div class="grab"></div>
+  <h2>ไม่สะดวกรับคิวนี้?</h2>
+  <p class="sub">เลือกเหตุผล ระบบจะส่งคิวให้คนถัดไปทันที และแจ้งแอดมิน</p>
+  <div class="reqs" id="decl-reasons"></div>
+  <button class="btn btn-ghost btn-sm" data-act="close" style="margin-top:12px">กลับไปรับคิว</button>
+</div></div>
+
+<!-- my menu -->
+<div class="sheet" id="sh-menu" hidden><div class="panel">
+  <div class="grab"></div>
+  <h2>เมนูของฉัน</h2>
+  <div class="grid-menu">
+    <button class="gm" data-act="leave"><em>🗓️</em><b>ขอลา / วันหยุด</b><small>แอดมินอนุมัติในแอป</small><span class="dotn" id="m-lv" hidden></span></button>
+    <button class="gm" data-act="adv"><em>💵</em><b>ขอเบิกเงิน</b><small>หักจากค่ามืองวดนี้</small><span class="dotn" id="m-ad" hidden></span></button>
+    <button class="gm" data-act="slips"><em>🧾</em><b>สลิปค่ามือ</b><small>ดูย้อนหลังได้</small></button>
+    <button class="gm" data-act="board"><em>🏆</em><b>อันดับ &amp; รีวิว</b><small>คะแนนของฉันเดือนนี้</small></button>
+    <button class="gm" data-act="tip"><em>💝</em><b>รับทิป</b><small>QR พร้อมเพย์ของฉัน</small></button>
+    <button class="gm" data-act="history"><em>📊</em><b>งานของฉัน</b><small>วันนี้ + 7 วัน</small></button>
+  </div>
+  <button class="btn btn-ghost btn-sm" data-act="close" style="margin-top:14px">ปิด</button>
+</div></div>
+
+<div class="sheet" id="sh-leave" hidden><div class="panel">
+  <div class="grab"></div>
+  <h2>ขอลา / ขอวันหยุด</h2>
+  <div class="dates" style="margin-top:14px"><label><span>ตั้งแต่</span><input id="lv-from" class="inp sm" type="date"></label><label><span>ถึง</span><input id="lv-to" class="inp sm" type="date"></label></div>
+  <div class="field-l">เหตุผล</div>
+  <div class="chips" id="lv-chips"></div>
+  <input id="lv-reason" class="inp sm" placeholder="หรือพิมพ์เหตุผล">
+  <button class="btn btn-gold btn-sm" data-act="sendLeave" style="margin-top:14px">ส่งคำขอลา</button>
+  <div class="field-l">คำขอของฉัน</div>
+  <div class="lst" id="lv-list"></div>
+  <button class="btn btn-ghost btn-sm" data-act="close" style="margin-top:12px">ปิด</button>
+</div></div>
+
+<div class="sheet" id="sh-adv" hidden><div class="panel">
+  <div class="grab"></div>
+  <h2>ขอเบิกเงินล่วงหน้า</h2>
+  <p class="sub" id="ad-sub"></p>
+  <div class="field-l">จำนวนเงิน (บาท)</div>
+  <input id="ad-amt" class="inp num" type="number" inputmode="numeric" min="0" step="100">
+  <div class="chips" style="margin-top:10px" id="ad-quick"></div>
+  <input id="ad-reason" class="inp sm" placeholder="เหตุผล (ไม่บังคับ)">
+  <button class="btn btn-gold btn-sm" data-act="sendAdv" style="margin-top:14px">ส่งคำขอเบิก</button>
+  <div class="field-l">คำขอของฉัน</div>
+  <div class="lst" id="ad-list"></div>
+  <button class="btn btn-ghost btn-sm" data-act="close" style="margin-top:12px">ปิด</button>
+</div></div>
+
+<div class="sheet" id="sh-slips" hidden><div class="panel">
+  <div class="grab"></div>
+  <h2>สลิปค่ามือของฉัน</h2>
+  <div id="slip-list"></div>
+  <button class="btn btn-ghost btn-sm" data-act="close" style="margin-top:12px">ปิด</button>
+</div></div>
+
+<div class="sheet" id="sh-board" hidden><div class="panel">
+  <div class="grab"></div>
+  <h2>อันดับเดือนนี้</h2>
+  <div id="board-body"></div>
+  <button class="btn btn-ghost btn-sm" data-act="close" style="margin-top:12px">ปิด</button>
+</div></div>
+
+<div class="sheet" id="sh-tip" hidden><div class="panel">
+  <div class="grab"></div>
+  <h2>รับทิปจากลูกค้า</h2>
+  <div id="tip-body"></div>
+  <button class="btn btn-ghost btn-sm" data-act="close" style="margin-top:12px">ปิด</button>
+</div></div>
+
+<div class="sheet" id="sh-cam" hidden><div class="panel">
+  <div class="grab"></div>
+  <h2 id="cam-title">สแกน QR เช็คชื่อ</h2>
+  <p class="sub" id="cam-sub">เล็งกล้องไปที่ QR บนจอที่เคาน์เตอร์</p>
+  <div class="cam"><video id="cam-v" playsinline muted autoplay></video><div class="fr" id="cam-fr"></div></div>
+  <div class="cam-st" id="cam-st"></div>
+  <button class="btn btn-gold btn-sm" data-act="snap" id="cam-snap" hidden>📸 ถ่ายรูป</button>
+  <button class="btn btn-ghost btn-sm" data-act="close" style="margin-top:10px">ยกเลิก</button>
 </div></div>
 
 <!-- confirm dialog -->
@@ -586,7 +741,7 @@ var ROOM_URL = "https://script.google.com/macros/s/AKfycbylXf_kfZmAo2qN2UTnF4NpI
       return '<div class="rm-item"><div class="rm-nm" style="margin:0">' + esc(b.d.n) + '<div class="rm-sub" style="text-align:left">' + esc(clean(q.n)) + ' · ' + esc(TN[q.t] || q.t) + '</div></div><div class="rm-left' + cls + '">' + txt + '</div></div>';
     }).join('') : '<div class="rm-empty">ยังไม่มี</div>';
     $('rm-off').innerHTML = offs.length ? offs.map(function (d) {
-      return '<button class="rm-off" data-n="' + esc(d.n) + '" data-st="' + d.st + '">' + esc(d.n) + '<small>' + (d.st === 'break' ? 'พักเบรก · แตะเพื่อกลับเข้าคิว' : 'แตะเพื่อเช็คชื่อ') + '</small></button>';
+      return '<button class="rm-off" data-n="' + esc(d.n) + '" data-st="' + d.st + '">' + esc(d.n) + '<small>' + (d.st === 'break' ? 'พักเบรก · แตะเพื่อกลับเข้าคิว' : d.st === 'clean' ? '🧹 เก็บห้อง · แตะเมื่อเสร็จ' : (D.cfg && D.cfg.guard && D.cfg.guard.qrCheckin ? 'ยังไม่เช็คชื่อ (สแกน QR ที่เคาน์เตอร์)' : 'แตะเพื่อเช็คชื่อ')) + '</small></button>';
     }).join('') : '<div class="rm-empty">ทุกคนเข้างานแล้ว</div>';
     // คิวที่ยังไม่มีใครรับทราบ
     var pending = null, qs = D.qs || [];
@@ -633,8 +788,9 @@ var ROOM_URL = "https://script.google.com/macros/s/AKfycbylXf_kfZmAo2qN2UTnF4NpI
       var el = e.target; while (el && el !== this && !el.getAttribute('data-n')) el = el.parentNode;
       if (!el || el === this) return;
       var n = el.getAttribute('data-n'), st = el.getAttribute('data-st');
-      if (st === 'break') ask('กลับเข้าคิว?', n + ' กลับมารับงาน', function () { post({ action: 'UPDATE_DR_STATUS', dr: n, status: 'free' }); });
-      else ask('เช็คชื่อเข้างาน?', n + ' จะต่อท้ายคิวรับลูกค้า', function () { post({ action: 'CHECKIN', dr: n }); });
+      var fail = function (err) { if (err) setTimeout(function () { ask('ทำรายการไม่สำเร็จ', err.message === 'net' ? 'เชื่อมต่อไม่ได้ ลองใหม่' : err.message, null); }, 300); };
+      if (st === 'break' || st === 'clean') ask(st === 'clean' ? 'เก็บห้องเสร็จแล้ว?' : 'กลับเข้าคิว?', n + ' กลับมารับงาน', function () { post({ action: 'UPDATE_DR_STATUS', dr: n, status: 'free' }, fail); });
+      else ask('เช็คชื่อเข้างาน?', n + ' จะต่อท้ายคิวรับลูกค้า', function () { post({ action: 'CHECKIN', dr: n }, fail); });
     };
     $('rm-cf-no').onclick = function () { $('rm-confirm').style.display = 'none'; cfAction = null; };
     $('rm-cf-ok').onclick = function () { $('rm-confirm').style.display = 'none'; var f = cfAction; cfAction = null; if (f) f(); };
@@ -678,6 +834,7 @@ function close(id) {
   const s = $('#' + id); if (!s.classList.contains('open')) return;
   s.classList.remove('open'); setTimeout(() => { if (!s.classList.contains('open')) s.hidden = true; }, 300);
   if (id === 'sh-dlg' && dlgResolve) { const r = dlgResolve; dlgResolve = null; r(false); }
+  if (id === 'sh-cam') { camStop(); if (CAM.resolve) { const r = CAM.resolve; CAM.resolve = null; r(''); } }
 }
 function ask(ic, t, m, ok = 'ยืนยัน', cls = 'btn-gold') {
   $('#d-ic').textContent = ic; $('#d-t').textContent = t; $('#d-m').textContent = m;
@@ -738,14 +895,16 @@ function route() {
   if (active) {
     job = active;
     if (!active.staffAck && !ackSent.has(String(active.id))) return startAlarm(active);
-    stopAlarm(); renderJob(); return show('job');
+    stopAlarm(); renderJob(); speakState('job'); return show('job');
   }
   job = null; stopAlarm();
-  if (myStatus() === 'break') { renderBreak(); return show('break'); }
-  const meDr = (D?.drs || []).find(d => d.n === me);
-  if (meDr && (meDr.in === false || meDr.st === 'off')) { $('#ci-name').textContent = me; return show('checkin'); }
+  updMenuDots();
+  if (myStatus() === 'break') { renderBreak(); speakState('break'); return show('break'); }
+  if (myStatus() === 'clean') { renderClean(); show('clean'); cleanTimer(); speakState('clean'); return; }
+  const md = (D?.drs || []).find(d => d.n === me);
+  if (md && (md.in === false || md.st === 'off')) { $('#ci-name').textContent = me; show('checkin'); updShift(); speakState('checkin'); return; }
   try { localStorage.removeItem(LS.brk); } catch (e) {}
-  renderStandby(); show('standby');
+  renderStandby(); show('standby'); speakState('standby');
 }
 
 /* ---------- renders ---------- */
@@ -767,7 +926,8 @@ function renderStandby() {
   $('#sb-name').textContent = me;
   const rot = (D?.drs || []).filter(d => d.in && d.st === 'free' && !(D.qs || []).some(q => q.dr === d.n && q.status === 'active')).sort((a, b) => (a.turnAt || 0) - (b.turnAt || 0));
   const k = rot.findIndex(d => d.n === me) + 1;
-  $('#sb-turn').innerHTML = k ? (k === 1 ? 'คุณได้คิว<b>ถัดไป</b> เตรียมตัวได้เลย' : `คุณอยู่คิวที่<b>${k}</b>รออีก ${k - 1} คน`) : '';
+  $('#sb-turn').innerHTML = k ? (k === 1 ? 'คุณได้คิว<b>ถัดไป</b> เตรียมตัวได้เลย' : `คุณอยู่คิวที่<b>${k}</b>`) : '';
+  $('#sb-eta').textContent = etaText(k);
   const done = doneJobs(), all = mine().filter(q => q.status === 'done');
   const mins = done.reduce((a, q) => a + (Number(q.d) || 0), 0);
   $('#st-jobs').textContent = done.length;
@@ -792,6 +952,7 @@ function renderJob() {
   const t = (D?.ctags || {})[q.n] || '';
   $('#j-note').innerHTML = (q.note ? `<div class="note"><b>📝</b><span>${esc(q.note)}</span></div>` : '')
     + (/แบล็ก|ระวัง|⛔|🚫/.test(t) ? `<div class="alertline">⚠️ ลูกค้ารายนี้มีประวัติ “${esc(t)}” — ถ้ามีปัญหากดเรียกแอดมินได้ทันที</div>` : '');
+  $('#j-health').innerHTML = healthHTML(q.n);
   $('#j-brief').innerHTML = briefHTML(q.n); loadBrief(q.n);
   $('#j-comm').innerHTML = jobCommHTML(q);
   $('#j-prep').innerHTML = prepHTML(q);
@@ -827,6 +988,8 @@ function tick() {
   if (!$('#s-break').hidden) breakNudge();
   if (!$('#s-standby').hidden) bookingReminders();
   watchdog(); escalate();
+  if (!$('#s-checkin').hidden && now() % 15000 < 1000) updShift();
+  if (!$('#s-clean').hidden) cleanTimer();
   if (!$('#s-break').hidden) {
     const at = Number(localStorage.getItem(LS.brk)) || now(), sec = Math.max(0, Math.floor((now() - at) / 1000));
     $('#break-time').textContent = `${pad(Math.floor(sec / 60))}:${pad(sec % 60)}`;
@@ -841,12 +1004,14 @@ function startAlarm(q) {
   $('#a-serv').textContent = `${TYPES[q.t] || q.t} · ${q.d} นาที`;
   $('#a-time').textContent = (q.time || '') + (q.req ? ' · ลูกค้าขอตัว' : '');
   $('#a-note').textContent = q.note || ''; $('#a-note-row').hidden = !q.note;
+  $('#a-health').innerHTML = healthHTML(q.n);
   $('#a-brief').innerHTML = briefHTML(q.n); loadBrief(q.n);
   if (!$('#alert').hidden) return;
+  swipeReset();
   $('#alert').hidden = false; alarmAt = Date.now(); $('#alert').classList.remove('urgent'); $('#a-esc').textContent = '';
   const ring = () => { chime(true); navigator.vibrate?.([500, 200, 500, 200, 500]); };
   ring(); alarmT = setInterval(ring, 2200);
-  setTimeout(() => say(`มีคิวใหม่ คุณ${cleanName(q.n)} ${TYPES[q.t] || ''} ${q.d} นาที`), 900);
+  setTimeout(() => say(`มีคิวใหม่ คุณ${cleanName(q.n)} ${TYPES[q.t] || ''} ${q.d} นาที${healthOf(q.n) ? ' ระวัง ' + healthOf(q.n) : ''}`), 900);
   bgAlert(q);
 }
 function stopAlarm() { clearInterval(alarmT); alarmT = null; alarmAt = 0; navigator.vibrate?.(0); $('#alert').hidden = true; stopTitle(); try { speechSynthesis.cancel(); } catch (e) {} }
@@ -989,7 +1154,7 @@ function watchdog() {
 }
 
 /* ⑭ ตัวหนังสือใหญ่ · ⑮ อ่านออกเสียงคิวใหม่ */
-function applyPref() { document.body.classList.toggle('big', !!PREF.big); }
+function applyPref() { document.body.classList.toggle('big', !!PREF.big); document.body.classList.toggle('simple', !!PREF.simple); }
 function say(text) {
   if (!PREF.tts || !window.speechSynthesis) return;
   try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = 'th-TH'; u.rate = .9; const v = speechSynthesis.getVoices().find(v => /^th/i.test(v.lang)); if (v) u.voice = v; speechSynthesis.speak(u); } catch (e) {}
@@ -1065,6 +1230,231 @@ function updPushSt() {
   el.innerHTML = !inApp() ? '📵 ตอนนี้เปิดผ่านเบราว์เซอร์ — ต้องเปิดผ่าน<b>แอปของร้าน</b> ถึงจะได้แจ้งเตือนเด้งตอนดูละคร/ปิดจอ'
     : PUSH.linked ? `✅ มือถือเครื่องนี้รับแจ้งเตือนของ <b>${esc(me)}</b> แล้ว` : '⏳ กำลังเชื่อมแจ้งเตือน…';
 }
+/* ═════════════════════════════════════════════════════════════════
+   v4.0 — ฟีเจอร์อัจฉริยะเพิ่ม (หน้าพนักงาน)
+   ═════════════════════════════════════════════════════════════════ */
+const G4 = () => Object.assign({ shiftStart: '10:00', lateGrace: 10, qrCheckin: false, selfie: false, cleanStep: true, cleanMin: 10, advMax: 1000 }, D?.cfg?.guard || {});
+const meDr = () => (D?.drs || []).find(d => d.n === me) || {};
+const isoDay = (ms = now()) => { const d = new Date(ms); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
+const thD = iso => new Date(iso + 'T00:00:00').toLocaleDateString('th-TH', { weekday: 'short', day: 'numeric', month: 'short' });
+
+/* ㉙ ข้อมูลสุขภาพ/อาการแพ้ของลูกค้า — ตัวแดง */
+const healthOf = n => (D?.health || {})[cleanName(n).replace(/\s*\(คอร์ส.*$/, '').trim()] || '';
+const healthHTML = n => { const h = healthOf(n); return h ? `<div class="health"><span>🩺</span><span><b>ระวัง!</b> ${esc(h)}</span></div>` : ''; };
+
+/* ㊵ นับถอยหลังเวลาเข้างาน */
+function shiftHTML() {
+  const st = meDr().start || G4().shiftStart, grace = Number(G4().lateGrace) || 0;
+  const m = toMin(fmtT(now())) - toMin(st);
+  if (m < -180 || m > 300) return '';
+  if (m < 0) { const left = -m; return { cls: '', t: `เวลาเข้างาน <b>${st}</b> · อีก ${left >= 60 ? Math.floor(left / 60) + ' ชม. ' : ''}${left % 60} นาที` }; }
+  if (m <= grace) return { cls: 'ok', t: `เวลาเข้างาน <b>${st}</b> · ยังทันเวลา รีบเช็คชื่อเลย ✓` };
+  return { cls: 'late', t: `⚠️ เลยเวลาเข้างาน (${st}) มา <b>${m}</b> นาทีแล้ว` };
+}
+function updShift() {
+  const el = $('#ci-shift'); if (!el || $('#s-checkin').hidden) return;
+  const h = shiftHTML(); el.className = 'shift ' + (h.cls || ''); el.innerHTML = h.t || '';
+  $('#ci-btn').innerHTML = G4().qrCheckin ? '📷 สแกน QR เช็คชื่อเข้างาน' : G4().selfie ? '🤳 ถ่ายรูปเช็คชื่อเข้างาน' : '✓ เช็คชื่อเข้างาน';
+}
+
+/* ㊴ คิวของฉัน + เวลารอโดยประมาณ */
+function etaText(k) {
+  if (!k) return '';
+  if (k === 1) return 'ลูกค้าคนถัดไปที่ไม่ระบุหมอ เป็นของคุณ';
+  const qs = (D?.qs || []).filter(q => q.kind === 'svc' || q.kind === 'course');
+  const first = Math.min(...qs.map(q => q.queuedAt || q.startTime || now()), now());
+  const hrs = Math.max(1, (now() - first) / 3600000), rate = qs.length / hrs;
+  if (!qs.length || rate < 0.2) return `รออีก ${k - 1} คน`;
+  const m = Math.round((k - 1) / rate * 60);
+  return `รออีก ${k - 1} คน · ประมาณ ${m < 60 ? m + ' นาที' : (m / 60).toFixed(1) + ' ชม.'} (จากจำนวนลูกค้าวันนี้)`;
+}
+
+/* ㉘ ปัดเพื่อรับคิว */
+function initSwipe() {
+  const box = $('#swipe'), k = $('#sw-k'), fill = $('#sw-fill');
+  let x0 = 0, dx = 0, drag = false;
+  const max = () => box.clientWidth - k.offsetWidth - 8;
+  const set = v => { k.style.transform = `translateX(${v}px)`; fill.style.width = (v + 72) + 'px'; };
+  const reset = () => { box.classList.remove('done'); k.style.transition = 'transform .25s'; fill.style.transition = 'width .25s'; set(0); setTimeout(() => { k.style.transition = ''; fill.style.transition = ''; }, 260); };
+  box.addEventListener('pointerdown', e => { if (e.target !== k) return; drag = true; x0 = e.clientX; dx = 0; k.setPointerCapture(e.pointerId); navigator.vibrate?.(20); });
+  box.addEventListener('pointermove', e => { if (!drag) return; dx = Math.max(0, Math.min(max(), e.clientX - x0)); set(dx); });
+  const up = () => {
+    if (!drag) return; drag = false;
+    if (dx >= max() * 0.82) { set(max()); box.classList.add('done'); k.textContent = '✓'; navigator.vibrate?.([40, 40, 80]); setTimeout(() => { A.ack(); k.textContent = '›'; reset(); }, 180); }
+    else reset();
+  };
+  box.addEventListener('pointerup', up); box.addEventListener('pointercancel', up);
+  return reset;
+}
+let swipeReset = () => {};
+
+/* ㉖ สแกน QR · ㉗ เซลฟี */
+const CAM = { stream: null, timer: 0, det: null, mode: '', resolve: null };
+let jsQRp = null;
+function loadJsQR() {
+  if (window.jsQR) return Promise.resolve();
+  if (!jsQRp) jsQRp = new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js'; sc.onload = ok; sc.onerror = () => { jsQRp = null; no(new Error('โหลดตัวอ่าน QR ไม่ได้')); }; document.head.appendChild(sc); });
+  return jsQRp;
+}
+async function camOpen(mode) {
+  CAM.mode = mode;
+  $('#cam-title').textContent = mode === 'qr' ? 'สแกน QR เช็คชื่อ' : 'ถ่ายรูปเช็คชื่อ';
+  $('#cam-sub').textContent = mode === 'qr' ? 'เล็งกล้องไปที่ QR บนจอที่เคาน์เตอร์' : 'มองกล้อง ให้หน้าอยู่ในวงรี แล้วกดถ่ายรูป';
+  $('#cam-fr').className = 'fr' + (mode === 'qr' ? '' : ' face');
+  $('#cam-snap').hidden = mode === 'qr'; $('#cam-st').textContent = 'กำลังเปิดกล้อง…';
+  open('sh-cam');
+  return new Promise(async res => {
+    CAM.resolve = res;
+    try {
+      CAM.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: mode === 'qr' ? { ideal: 'environment' } : 'user', width: { ideal: 1280 } }, audio: false });
+      const v = $('#cam-v'); v.srcObject = CAM.stream; v.style.transform = mode === 'qr' ? '' : 'scaleX(-1)'; await v.play().catch(() => {});
+      $('#cam-st').textContent = mode === 'qr' ? 'กำลังหา QR…' : '';
+      if (mode === 'qr') { if (!('BarcodeDetector' in window)) await loadJsQR(); else try { CAM.det = new BarcodeDetector({ formats: ['qr_code'] }); } catch (e) { await loadJsQR(); } scanTick(); }
+    } catch (e) { $('#cam-st').textContent = 'เปิดกล้องไม่ได้ — กดอนุญาตให้แอปใช้กล้อง หรือให้แอดมินเช็คชื่อให้'; }
+  });
+}
+function camStop() { clearTimeout(CAM.timer); if (CAM.stream) CAM.stream.getTracks().forEach(t => t.stop()); CAM.stream = null; }
+function camDone(v) { const r = CAM.resolve; CAM.resolve = null; camStop(); close('sh-cam'); r && r(v); }
+let camCv = null;
+async function scanTick() {
+  if (!CAM.stream || CAM.mode !== 'qr') return;
+  const v = $('#cam-v');
+  if (v.videoWidth) {
+    let txt = '';
+    try {
+      if (CAM.det) { const r = await CAM.det.detect(v); txt = r[0]?.rawValue || ''; }
+      else if (window.jsQR) {
+        camCv = camCv || document.createElement('canvas'); const s = Math.min(1, 720 / v.videoWidth);
+        camCv.width = v.videoWidth * s; camCv.height = v.videoHeight * s; const g = camCv.getContext('2d', { willReadFrequently: true }); g.drawImage(v, 0, 0, camCv.width, camCv.height);
+        const r = jsQR(g.getImageData(0, 0, camCv.width, camCv.height).data, camCv.width, camCv.height); txt = r?.data || '';
+      }
+    } catch (e) {}
+    if (/^PKTCI:/.test(txt)) { navigator.vibrate?.(80); chime(false); return camDone(txt); }
+    if (txt) $('#cam-st').textContent = 'QR นี้ไม่ใช่ QR เช็คชื่อ — สแกน QR บนจอเคาน์เตอร์';
+  }
+  CAM.timer = setTimeout(scanTick, 200);
+}
+function snapSelfie() {
+  const v = $('#cam-v'); if (!v.videoWidth) return;
+  const c = document.createElement('canvas'), W = 240, H = 320, sr = v.videoWidth / v.videoHeight, tr = W / H;
+  let sw = v.videoWidth, sh = v.videoHeight, sx = 0, sy = 0;
+  if (sr > tr) { sw = sh * tr; sx = (v.videoWidth - sw) / 2; } else { sh = sw / tr; sy = (v.videoHeight - sh) / 2; }
+  c.width = W; c.height = H; const g = c.getContext('2d'); g.translate(W, 0); g.scale(-1, 1); g.drawImage(v, sx, sy, sw, sh, 0, 0, W, H);
+  let q = 0.7, url = c.toDataURL('image/jpeg', q);
+  while (url.length > 40000 && q > 0.3) { q -= 0.1; url = c.toDataURL('image/jpeg', q); }
+  navigator.vibrate?.(60); camDone(url);
+}
+async function doCheckin(btn) {
+  const g = G4(), data = { dr: me };
+  if (g.qrCheckin) { const code = await camOpen('qr'); if (!code) return; data.code = code; }
+  if (g.selfie) { const ph = await camOpen('selfie'); if (!ph) { if (!await ask('🤳', 'ไม่มีรูปเซลฟี', 'เช็คชื่อโดยไม่มีรูป? แอดมินจะเห็นว่า “ไม่มีรูป”', 'เช็คชื่อเลย')) return; } else data.photo = ph; }
+  await busy(btn, async () => {
+    const j = await post('CHECKIN', data);
+    const late = j.out?.late;
+    toast(j.out?.already ? 'เช็คชื่อแล้ว ' + (j.out.time || '') : `✓ เช็คชื่อแล้ว ${j.out?.time || ''}${late ? ` · สาย ${late} นาที` : ''}`, late ? 'bad' : 'ok');
+    say(late ? `เช็คชื่อแล้ว สาย ${late} นาที` : 'เช็คชื่อเรียบร้อย');
+    route();
+  });
+}
+
+/* ㊲ เก็บห้องหลังจบงาน */
+const CLEAN = ['เปลี่ยนผ้าปูเตียง / ปลอกหมอน', 'เก็บผ้าขนหนูใช้แล้วลงตะกร้า', 'เช็ดเตียงและอุปกรณ์', 'เติมน้ำมัน / ของใช้ให้พร้อม', 'ทิ้งขยะ จัดห้องให้เรียบร้อย'];
+function renderClean() {
+  const k = 'clean_' + (meDr().cleanAt || 0), done = lsJ(k, []);
+  $('#clean-list').innerHTML = `<div class="prep-h">🧺 เช็คลิสต์เก็บห้อง (${done.length}/${CLEAN.length})</div>` + CLEAN.map((it, i) => `<button class="pi ${done.includes(i) ? 'on' : ''}" data-act="cleanTick" data-i="${i}"><span>${done.includes(i) ? '✓' : ''}</span>${esc(it)}</button>`).join('');
+  const all = done.length >= CLEAN.length, b = $('#clean-btn'); b.disabled = !all; b.style.opacity = all ? 1 : .45;
+}
+function cleanTimer() { const at = meDr().cleanAt; if (!at || $('#s-clean').hidden) return; const s = Math.max(0, Math.floor((now() - at) / 1000)); $('#clean-t').textContent = `${Math.floor(s / 60)}:${pad(s % 60)}`; $('#clean-t').style.color = s > G4().cleanMin * 60 ? 'var(--bad)' : ''; }
+
+/* ㉚ พูดบันทึกโน้ต */
+let noteRec = null;
+function micNote() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition, b = $('#f-mic');
+  if (!SR) { $('#f-note').focus(); return toast('กดรูปไมค์บนแป้นพิมพ์ แล้วพูดได้เลย', ''); }
+  if (noteRec) { try { noteRec.stop(); } catch (e) {} return; }
+  noteRec = new SR(); noteRec.lang = 'th-TH'; noteRec.interimResults = false;
+  const base = $('#f-note').value.trim();
+  b.classList.add('rec'); b.textContent = '⏹ กำลังฟัง… แตะเพื่อหยุด';
+  noteRec.onresult = e => { const t = [...e.results].map(r => r[0].transcript).join(' '); $('#f-note').value = base ? base + ', ' + t : t; };
+  noteRec.onerror = () => toast('ฟังไม่ชัด ลองใหม่อีกครั้ง', 'bad');
+  noteRec.onend = () => { b.classList.remove('rec'); b.textContent = '🎙️ กดแล้วพูดบันทึก (ไม่ต้องพิมพ์)'; noteRec = null; };
+  try { noteRec.start(); } catch (e) { noteRec.onend(); }
+}
+
+/* ㉛ ลา · ㉜ เบิกเงิน */
+const LV_REASONS = ['ป่วย / ไม่สบาย', 'ธุระครอบครัว', 'กลับบ้านต่างจังหวัด', 'ไปหาหมอ', 'งานบุญ / งานบวช'];
+const stP = st => `<span class="st-p ${st}">${st === 'pending' ? 'รออนุมัติ' : st === 'ok' ? 'อนุมัติแล้ว' : 'ไม่อนุมัติ'}</span>`;
+function renderLeave() {
+  const mine = (D?.leaves || []).filter(l => l.dr === me).sort((a, b) => b.from.localeCompare(a.from));
+  $('#lv-list').innerHTML = mine.map(l => `<div class="li"><div><b>${thD(l.from)}${l.to !== l.from ? ' – ' + thD(l.to) : ''}</b><small>${esc(l.reason)}</small></div><div style="display:flex;gap:6px;align-items:center">${stP(l.st)}${l.st === 'pending' ? `<button class="chip" data-act="cancelReq" data-id="${esc(l.id)}">ยกเลิก</button>` : ''}</div></div>`).join('') || '<div class="empty">ยังไม่มีคำขอ</div>';
+}
+function renderAdv() {
+  const mine = (D?.adv || []).filter(a => a.dr === me).sort((a, b) => b.at - a.at).slice(0, 10);
+  $('#ad-list').innerHTML = mine.map(a => `<div class="li"><div><b>${baht(a.amt)}</b><small>${new Date(a.at).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })}${a.reason ? ' · ' + esc(a.reason) : ''}</small></div><div style="display:flex;gap:6px;align-items:center">${stP(a.st)}${a.st === 'pending' ? `<button class="chip" data-act="cancelReq" data-id="${esc(a.id)}">ยกเลิก</button>` : ''}</div></div>`).join('') || '<div class="empty">ยังไม่มีคำขอ</div>';
+}
+function updMenuDots() {
+  const lv = (D?.leaves || []).filter(l => l.dr === me && l.st !== 'pending' && !lsJ('seen_req', []).includes(l.id)).length;
+  const ad = (D?.adv || []).filter(a => a.dr === me && a.st !== 'pending' && !lsJ('seen_req', []).includes(a.id)).length;
+  const s1 = $('#m-lv'), s2 = $('#m-ad'); if (!s1) return;
+  s1.hidden = !lv; s1.textContent = lv; s2.hidden = !ad; s2.textContent = ad;
+  const mb = $('#menu-btn'); if (mb) mb.innerHTML = '☰ เมนูของฉัน · ลา · เบิก · สลิป · ทิป' + (lv + ad ? ` <span class="st-p ok">${lv + ad} ใหม่</span>` : '');
+}
+function markSeen() { const ids = [...(D?.leaves || []), ...(D?.adv || [])].filter(x => x.dr === me && x.st !== 'pending').map(x => x.id); lsS('seen_req', [...new Set([...lsJ('seen_req', []), ...ids])].slice(-80)); updMenuDots(); }
+
+/* ㉝ สลิปค่ามือ · ㉞ อันดับ · ㉟ รีวิว */
+async function loadSlips() {
+  $('#slip-list').innerHTML = '<div class="empty">กำลังโหลด…</div>';
+  try {
+    const j = await (await fetch(`${SCRIPT_URL}?mode=myslip&dr=${encodeURIComponent(me)}&t=${Date.now()}`)).json();
+    $('#slip-list').innerHTML = (j.slips || []).map(s => `<div class="slip"><div class="eyebrow">งวด ${esc(s.period)}</div>
+      <div class="kv"><span>จำนวนคิว</span><b>${s.jobs} คิว · ${(s.mins / 60).toFixed(1)} ชม.</b></div><div class="kv"><span>ค่ามือ</span><b>${baht(s.comm)}</b></div>
+      <div class="kv"><span>หักเงินเบิก</span><b style="color:var(--bad)">${s.adv ? '−' + baht(s.adv) : '-'}</b></div>${s.tips ? `<div class="kv"><span>ทิป (ได้รับตรงแล้ว)</span><b>${baht(s.tips)}</b></div>` : ''}
+      <div class="total" style="margin-top:8px"><span>รับสุทธิ</span><span class="num">${baht(s.net)}</span></div></div>`).join('') || '<div class="empty">ยังไม่มีสลิป — แอดมินจะส่งให้ตอนสรุปงวด</div>';
+  } catch (e) { $('#slip-list').innerHTML = '<div class="empty">โหลดไม่ได้ ตรวจอินเทอร์เน็ต</div>'; }
+}
+async function loadBoard() {
+  $('#board-body').innerHTML = '<div class="empty">กำลังโหลด…</div>';
+  try {
+    const j = await (await fetch(`${SCRIPT_URL}?mode=board&dr=${encodeURIComponent(me)}&t=${Date.now()}`)).json();
+    const rows = j.rows || [], mine = rows.find(r => r.n === me) || { jobs: 0, req: 0, ack: 0, rate: 0, rateN: 0, tips: 0, late: 0, decl: 0 };
+    const top = (k, desc = true, f = () => true) => rows.filter(f).sort((a, b) => desc ? b[k] - a[k] : a[k] - b[k]);
+    const cats = [['💆 รับลูกค้ามากสุด', top('jobs'), r => r.jobs + ' คิว'], ['💛 ลูกค้าขอตัวมากสุด', top('req'), r => r.req + ' ครั้ง'], ['⚡ รับคิวไวสุด', top('ack', false, r => r.ack > 0), r => r.ack + ' วินาที'], ['⭐ รีวิวดีสุด', top('rate', true, r => r.rateN >= 3), r => r.rate + '⭐ (' + r.rateN + ')']];
+    const medals = cats.filter(c => c[1][0] && c[1][0].n === me && (c[1][0].jobs || c[1][0].req || c[1][0].ack || c[1][0].rate)).map(c => `<span class="medal">🏅 ${c[0].slice(2)}</span>`);
+    $('#board-body').innerHTML = `<div class="card" style="padding:16px;margin-top:10px"><div class="eyebrow">ของฉันเดือนนี้</div>
+      <div class="stats" style="margin:12px 0 6px"><div class="card stat"><b class="num">${mine.jobs}</b><span>คิว</span></div><div class="card stat"><b class="num">${mine.rateN ? mine.rate + '⭐' : '-'}</b><span>รีวิว (${mine.rateN})</span></div><div class="card stat"><b class="num">${mine.ack ? mine.ack + 'วิ' : '-'}</b><span>รับคิวเฉลี่ย</span></div></div>
+      <div class="sub" style="font-size:14px">ลูกค้าขอตัว ${mine.req} ครั้ง · ทิป ${mine.tips} ครั้ง${mine.late ? ` · <span style="color:var(--bad)">มาสาย ${mine.late} ครั้ง</span>` : ''}${mine.decl ? ` · ปฏิเสธคิว ${mine.decl}` : ''}</div>
+      ${medals.length ? `<div class="medals">${medals.join('')}</div>` : ''}</div>
+      ${cats.map(c => c[1].length ? `<div class="field-l">${c[0]}</div>${c[1].slice(0, 5).map((r, i) => `<div class="rank ${r.n === me ? 'me' : ''}"><span class="no">${['🥇', '🥈', '🥉'][i] || i + 1}</span><b>${esc(r.n)}</b><span class="num" style="color:var(--gold2)">${c[2](r)}</span></div>`).join('')}` : '').join('')}`;
+  } catch (e) { $('#board-body').innerHTML = '<div class="empty">โหลดไม่ได้ ตรวจอินเทอร์เน็ต</div>'; }
+}
+
+/* ㊱ ทิป */
+function ppPayload(id) {
+  const f = (tag, v) => tag + String(v.length).padStart(2, '0') + v;
+  const t = String(id).replace(/\D/g, '');
+  const acc = t.length === 13 ? f('02', t) : f('01', ('0000000000000' + t.replace(/^0/, '66')).slice(-13));
+  const p = f('00', '01') + f('01', '11') + f('29', f('00', 'A000000677010111') + acc) + f('53', '764') + f('58', 'TH') + '6304';
+  let crc = 0xFFFF; for (let i = 0; i < p.length; i++) { crc ^= p.charCodeAt(i) << 8; for (let j = 0; j < 8; j++) crc = (crc & 0x8000) ? (crc << 1) ^ 0x1021 : crc << 1; crc &= 0xFFFF; }
+  return p + crc.toString(16).toUpperCase().padStart(4, '0');
+}
+function qrImg(text) { if (window.qrcode) { try { const q = qrcode(0, 'M'); q.addData(text); q.make(); return q.createDataURL(8, 2); } catch (e) {} } return 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(text); }
+function renderTip() {
+  const pp = meDr().pp || '';
+  $('#tip-body').innerHTML = pp ? `<p class="sub">ให้ลูกค้าสแกน QR นี้ เงินเข้าบัญชีคุณโดยตรง</p><img class="qrbig" src="${qrImg(ppPayload(pp))}" alt="QR ทิป"><p class="sub" style="text-align:center">พร้อมเพย์ ${esc(pp.length === 10 ? pp.slice(0, 3) + '-xxx-' + pp.slice(6) : pp.slice(0, 4) + 'xxxxx' + pp.slice(-4))}</p>
+      <div class="field-l">ได้ทิปแล้ว? บันทึกไว้นับอันดับ</div><div class="row"><input id="tip-amt" class="inp num" type="number" inputmode="numeric" placeholder="บาท" style="flex:1.4"><button class="btn btn-gold btn-sm" data-act="saveTip">บันทึก</button></div>`
+    : `<p class="sub">ตั้งเบอร์พร้อมเพย์ของคุณครั้งแรก (เปลี่ยนภายหลังต้องให้เจ้าของร้านแก้)</p><input id="tip-pp" class="inp num" inputmode="numeric" placeholder="เบอร์ 10 หลัก หรือเลขบัตร 13 หลัก" style="margin-top:12px"><button class="btn btn-gold btn-sm" data-act="savePP" style="margin-top:12px">บันทึก</button>`;
+}
+
+/* ㊳ โหมดง่าย: พูดบอกทุกการเปลี่ยนสถานะ */
+let lastScreen = '';
+function speakState(scr) {
+  if (!PREF.simple || scr === lastScreen) { lastScreen = scr; return; }
+  lastScreen = scr;
+  const k = (D?.drs || []).filter(d => d.in && d.st === 'free' && !(D.qs || []).some(q => q.dr === d.n && q.status === 'active')).sort((a, b) => (a.turnAt || 0) - (b.turnAt || 0)).findIndex(d => d.n === me) + 1;
+  const m = { standby: k ? `พร้อมรับงาน คุณอยู่คิวที่ ${k}` : 'พร้อมรับงาน', break: 'กำลังพักเบรก', checkin: 'ยังไม่ได้เช็คชื่อ', clean: 'เก็บห้องให้เรียบร้อย แล้วกดพร้อมรับงาน', job: 'กำลังให้บริการลูกค้า' }[scr];
+  if (m) setTimeout(() => say(m), 400);
+}
+
 /* ---------- actions ---------- */
 function logout() { pushUnlink(); localStorage.removeItem(LS.name); me = ''; started = false; clearInterval(pollT); stopAlarm(); renderLogin(); startPoll(); }
 let bgTick = 0;
@@ -1073,10 +1463,7 @@ const A = {
   pick: ({ n }) => { me = n; localStorage.setItem(LS.name, n); $('#start-name').textContent = n; show('start'); },
   logout: () => logout(),
   start: () => { pushLink(drExt(me)); ctx(); chime(false); navigator.vibrate?.(120); keepAwake(); started = true; route(); pull(); watchBattery(); updOutbox(); try { speechSynthesis.getVoices(); } catch (e) {} },
-  checkin: (_, btn) => busy(btn, async () => {
-    const j = await post('CHECKIN', { dr: me });
-    toast(j.out?.already ? 'เช็คชื่อแล้ว ' + (j.out.time || '') : '✓ เช็คชื่อแล้ว ' + (j.out?.time || ''), 'ok'); route();
-  }),
+  checkin: (_, btn) => doCheckin(btn),
   ack: (_, btn) => {
     const id = String(job.id); ackSent.add(id); stopAlarm(); renderJob(); show('job');
     safePost('UPDATE_ACK', { id, dr: me }).catch(e => toast(e.message, 'bad'));
@@ -1110,13 +1497,14 @@ const A = {
     const j = await post('TEST_PUSH', { dr: me });
     toast(j.recipients === 0 ? 'ส่งแล้ว แต่ยังไม่พบเครื่องที่ลงทะเบียน — กดอนุญาตแจ้งเตือนในแอป แล้วลองใหม่' : '✓ ส่งแล้ว ล็อกจอดูได้เลย', j.recipients === 0 ? 'bad' : 'ok');
   }),
-  settings: () => { updPushSt(); $('#set-goal').value = PREF.goal; $('#set-big').checked = PREF.big; $('#set-tts').checked = PREF.tts; $('#set-notify').checked = PREF.notify; open('sh-set'); },
+  settings: () => { updPushSt(); $('#set-goal').value = PREF.goal; $('#set-big').checked = PREF.big; $('#set-simple').checked = !!PREF.simple; $('#set-tts').checked = PREF.tts; $('#set-notify').checked = PREF.notify; open('sh-set'); },
   saveSet: async () => {
-    PREF.goal = Math.max(0, Number($('#set-goal').value) || 0); PREF.big = $('#set-big').checked; PREF.tts = $('#set-tts').checked; PREF.notify = $('#set-notify').checked;
+    PREF.goal = Math.max(0, Number($('#set-goal').value) || 0); PREF.big = $('#set-big').checked; PREF.simple = $('#set-simple').checked; if (PREF.simple) PREF.tts = $('#set-tts').checked = true; PREF.tts = $('#set-tts').checked; PREF.notify = $('#set-notify').checked;
     if (PREF.notify && 'Notification' in window && Notification.permission === 'default') { try { await Notification.requestPermission(); } catch (e) {} }
     savePref(); applyPref(); close('sh-set'); if (started) route(); toast('✓ บันทึกแล้ว', 'ok'); if (PREF.tts) say('เปิดเสียงอ่านคิวแล้ว');
   },
   history: () => {
+    close('sh-menu');
     const list = mine().filter(q => q.status === 'done').sort((a, b) => (b.doneTime || 0) - (a.doneTime || 0));
     const total = list.reduce((a, q) => a + commOf(q), 0), mins = doneJobs().reduce((a, q) => a + (Number(q.d) || 0), 0);
     $('#h-sub').textContent = `${doneJobs().length} คิว · ${Math.floor(mins / 60)} ชม. ${mins % 60} นาที`;
@@ -1127,6 +1515,52 @@ const A = {
     open('sh-hist');
   },
   close: (_, el) => close(el.closest('.sheet').id),
+  // v4.0
+  decline: () => {
+    const rs = ['🤕 ปวดมือ / ไม่สบาย', '😟 ลูกค้าเคยมีปัญหากับฉัน', '🏃 ติดธุระด่วน 5–10 นาที', '🙅 ไม่ถนัดบริการนี้'];
+    $('#decl-reasons').innerHTML = rs.map(r => `<button class="btn btn-ghost btn-sm req" data-act="sendDecl" data-r="${esc(r.slice(2).trim())}">${esc(r)}</button>`).join('');
+    open('sh-decl');
+  },
+  sendDecl: ({ r }, btn) => busy(btn, async () => {
+    const j = await post('DECLINE_JOB', { id: job.id, dr: me, reason: r });
+    close('sh-decl'); stopAlarm(); ackSent.add('done' + job.id); job = null;
+    toast(`ส่งคิวให้ ${j.out?.dr || 'คนถัดไป'} แล้ว · แจ้งแอดมินแล้ว`, ''); route();
+  }),
+  snap: () => snapSelfie(),
+  cleanTick: ({ i }) => { const k = 'clean_' + (meDr().cleanAt || 0), d = lsJ(k, []), n = Number(i); lsS(k, d.includes(n) ? d.filter(x => x !== n) : [...d, n]); renderClean(); navigator.vibrate?.(30); },
+  cleanDone: (_, btn) => busy(btn, async () => { await post('UPDATE_DR_STATUS', { dr: me, status: 'free' }); toast('✓ พร้อมรับงานแล้ว', 'ok'); route(); }),
+  micNote: () => micNote(),
+  menu: () => { close('sh-hist'); updMenuDots(); open('sh-menu'); },
+  leave: () => {
+    close('sh-menu'); const t = isoDay(now() + 864e5);
+    $('#lv-from').value = t; $('#lv-to').value = t; $('#lv-from').min = isoDay(); $('#lv-to').min = isoDay(); $('#lv-reason').value = '';
+    $('#lv-chips').innerHTML = LV_REASONS.map(r => `<button class="chip" data-act="lvR" data-v="${esc(r)}">${esc(r)}</button>`).join('');
+    renderLeave(); markSeen(); setTimeout(() => open('sh-leave'), 250);
+  },
+  lvR: ({ v }) => { $('#lv-reason').value = v; },
+  sendLeave: (_, btn) => busy(btn, async () => {
+    const from = $('#lv-from').value, to = $('#lv-to').value || from, reason = $('#lv-reason').value.trim();
+    if (!from) return toast('เลือกวันที่', 'bad'); if (!reason) return toast('เลือกหรือพิมพ์เหตุผล', 'bad');
+    await post('REQ_LEAVE', { dr: me, from, to, reason }); renderLeave(); toast('✓ ส่งคำขอลาแล้ว รอแอดมินอนุมัติ', 'ok');
+  }),
+  adv: () => {
+    close('sh-menu'); const mx = Number(G4().advMax) || 0;
+    $('#ad-sub').textContent = mx ? `เบิกได้ไม่เกินครั้งละ ${baht(mx)} · ระบบจะหักจากค่ามืองวดนี้` : 'ระบบจะหักจากค่ามืองวดนี้';
+    $('#ad-amt').value = ''; $('#ad-reason').value = '';
+    $('#ad-quick').innerHTML = [200, 300, 500, 1000].filter(v => !mx || v <= mx).map(v => `<button class="chip" data-act="adQ" data-v="${v}">${baht(v)}</button>`).join('');
+    renderAdv(); markSeen(); setTimeout(() => open('sh-adv'), 250);
+  },
+  adQ: ({ v }) => { $('#ad-amt').value = v; },
+  sendAdv: (_, btn) => busy(btn, async () => {
+    const amt = Number($('#ad-amt').value); if (!(amt > 0)) return toast('ใส่จำนวนเงิน', 'bad');
+    await post('REQ_ADVANCE', { dr: me, amt, reason: $('#ad-reason').value.trim() }); renderAdv(); toast('✓ ส่งคำขอเบิกแล้ว รอเจ้าของร้านอนุมัติ', 'ok');
+  }),
+  cancelReq: ({ id }, btn) => busy(btn, async () => { await post('CANCEL_REQ', { dr: me, id }); renderLeave(); renderAdv(); toast('ยกเลิกคำขอแล้ว'); }),
+  slips: () => { close('sh-menu'); setTimeout(() => open('sh-slips'), 250); loadSlips(); },
+  board: () => { close('sh-menu'); setTimeout(() => open('sh-board'), 250); loadBoard(); },
+  tip: () => { close('sh-menu'); renderTip(); setTimeout(() => open('sh-tip'), 250); },
+  savePP: (_, btn) => busy(btn, async () => { await post('SET_MY_PP', { dr: me, pp: $('#tip-pp').value }); renderTip(); toast('✓ บันทึกพร้อมเพย์แล้ว', 'ok'); }),
+  saveTip: (_, btn) => busy(btn, async () => { const amt = Number($('#tip-amt').value); if (!(amt > 0)) return toast('ใส่จำนวนทิป', 'bad'); await post('TIP', { dr: me, amt }); $('#tip-amt').value = ''; toast(`✓ บันทึกทิป ${baht(amt)} แล้ว เก่งมาก!`, 'ok'); }),
   dlgOk: () => { const r = dlgResolve; dlgResolve = null; close('sh-dlg'); r && r(true); }
 };
 document.addEventListener('click', e => {
@@ -1142,6 +1576,7 @@ window.addEventListener('offline', () => net(false));
 setInterval(() => { $('#clock').textContent = fmtT(now()); if (started) tick(); }, 1000);
 $('#clock').textContent = fmtT(now());
 applyPref();
+swipeReset = initSwipe();
 (async () => {
   await pull();
   if (!D) { $('#s-boot').innerHTML = '<div class="boot"><div style="text-align:center"><div class="mark" style="margin:0 auto 16px">✦</div><p class="sub">เชื่อมต่อระบบไม่ได้</p><button class="btn btn-ghost btn-sm" onclick="location.reload()">ลองใหม่</button></div></div>'; startPoll(); return; }

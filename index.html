@@ -226,6 +226,8 @@ textarea:focus{border-color:var(--gold)}
 .rm-net{position:fixed;left:0;right:0;bottom:0;background:#FF6B5E;color:#fff;text-align:center;padding:1.4vmin;font-size:2.6vmin;font-weight:600;z-index:7}
 @media (orientation:portrait){.rm-body{display:block}.rm-col+.rm-col{margin:3vmin 0 0}.rm{overflow-y:auto}}
 /* ---------- smart ---------- */
+.push-st{padding:12px 14px;border-radius:14px;font-size:14px;line-height:1.5}
+.push-st.ok{background:var(--ok-soft);color:var(--ok)}.push-st.warn{background:var(--warn-soft);color:#FFD9A0}
 .hb{margin-left:8px;width:34px;height:34px;border-radius:11px;background:var(--card2);border:1px solid var(--line);font-size:15px;vertical-align:middle}
 .banners{position:fixed;left:0;right:0;bottom:0;z-index:150;display:flex;flex-direction:column}
 .bn{padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:var(--bad);color:#fff;font-size:13.5px;font-weight:600;text-align:center}
@@ -444,6 +446,9 @@ body.big .app,body.big .panel,body.big .alert{zoom:1.15}
   <h2>ตั้งค่าของฉัน</h2>
   <div class="field-l">เป้าค่ามือวันนี้ (บาท)</div>
   <input id="set-goal" class="inp num" type="number" inputmode="numeric" min="0" step="100">
+  <div class="field-l">แจ้งเตือนเด้งเข้ามือถือ</div>
+  <div class="push-st" id="push-st"></div>
+  <button class="btn btn-ghost btn-sm" data-act="testPush" style="margin-top:10px">🔔 ส่งแจ้งเตือนทดสอบมาที่เครื่องนี้</button>
   <div class="srow"><div><b>ตัวหนังสือใหญ่</b><small>อ่านง่ายขึ้น</small></div><input type="checkbox" class="sw" id="set-big"></div>
   <div class="srow"><div><b>อ่านออกเสียงคิวใหม่</b><small>พูดชื่อลูกค้าและบริการให้ฟัง</small></div><input type="checkbox" class="sw" id="set-tts"></div>
   <div class="srow"><div><b>แจ้งเตือนของระบบ</b><small>เด้งแจ้งเตือนเมื่อเปิดแอปอื่นอยู่ (ถ้าเครื่องรองรับ)</small></div><input type="checkbox" class="sw" id="set-notify"></div>
@@ -1034,14 +1039,40 @@ function bgAlert(q) {
 }
 function stopTitle() { clearInterval(titleT); titleT = null; document.title = 'Staff Pager · บ้านประคบทอง'; }
 
+/* ═════════ แอป Median + OneSignal: ลงทะเบียนเครื่องนี้ให้รับแจ้งเตือน ═════════ */
+const PUSH = { linked: '', asked: false, pending: null };
+const utf8hex = s => [...new TextEncoder().encode(String(s))].map(b => b.toString(16).padStart(2, '0')).join('');
+const drExt = n => 'dr_' + utf8hex(n);              // ต้องตรงกับ extId() ใน Code.gs
+const inApp = () => !!(window.median && window.median.onesignal);
+function pushLink(ext) {
+  const go = () => {
+    try {
+      median.onesignal.login(ext);
+      if (!PUSH.asked) { PUSH.asked = true; median.onesignal.register(); }   // ขอสิทธิ์แจ้งเตือน (ครั้งเดียว)
+      PUSH.linked = ext;
+    } catch (e) {}
+    updPushSt();
+  };
+  if (inApp()) go(); else PUSH.pending = go;
+  updPushSt();
+}
+function pushUnlink() { try { if (inApp()) median.onesignal.logout(); } catch (e) {} PUSH.linked = ''; PUSH.pending = null; }
+window.median_library_ready = () => { if (PUSH.pending) { const f = PUSH.pending; PUSH.pending = null; f(); } updPushSt(); };
+if (window.median) setTimeout(() => window.median_library_ready(), 0);
+function updPushSt() {
+  const el = $('#push-st'); if (!el) return;
+  el.className = 'push-st ' + (inApp() && PUSH.linked ? 'ok' : 'warn');
+  el.innerHTML = !inApp() ? '📵 ตอนนี้เปิดผ่านเบราว์เซอร์ — ต้องเปิดผ่าน<b>แอปของร้าน</b> ถึงจะได้แจ้งเตือนเด้งตอนดูละคร/ปิดจอ'
+    : PUSH.linked ? `✅ มือถือเครื่องนี้รับแจ้งเตือนของ <b>${esc(me)}</b> แล้ว` : '⏳ กำลังเชื่อมแจ้งเตือน…';
+}
 /* ---------- actions ---------- */
-function logout() { localStorage.removeItem(LS.name); me = ''; started = false; clearInterval(pollT); stopAlarm(); renderLogin(); startPoll(); }
+function logout() { pushUnlink(); localStorage.removeItem(LS.name); me = ''; started = false; clearInterval(pollT); stopAlarm(); renderLogin(); startPoll(); }
 let bgTick = 0;
 function startPoll() { clearInterval(pollT); pollT = setInterval(() => { if (!document.hidden || ++bgTick % 3 === 0) pull(); if (lsJ(OUTBOX_K, []).length) flushOutbox(); }, POLL_MS); }
 const A = {
   pick: ({ n }) => { me = n; localStorage.setItem(LS.name, n); $('#start-name').textContent = n; show('start'); },
   logout: () => logout(),
-  start: () => { ctx(); chime(false); navigator.vibrate?.(120); keepAwake(); started = true; route(); pull(); watchBattery(); updOutbox(); try { speechSynthesis.getVoices(); } catch (e) {} },
+  start: () => { pushLink(drExt(me)); ctx(); chime(false); navigator.vibrate?.(120); keepAwake(); started = true; route(); pull(); watchBattery(); updOutbox(); try { speechSynthesis.getVoices(); } catch (e) {} },
   checkin: (_, btn) => busy(btn, async () => {
     const j = await post('CHECKIN', { dr: me });
     toast(j.out?.already ? 'เช็คชื่อแล้ว ' + (j.out.time || '') : '✓ เช็คชื่อแล้ว ' + (j.out?.time || ''), 'ok'); route();
@@ -1074,7 +1105,12 @@ const A = {
   reqSend: ({ m }, btn) => busy(btn, async () => { await sendReq(m); close('sh-req'); }),
   prepTick: ({ i }) => { const k = 'prep_' + job.id, d = lsJ(k, []), n = Number(i); lsS(k, d.includes(n) ? d.filter(x => x !== n) : [...d, n]); $('#j-prep').innerHTML = prepHTML(job); navigator.vibrate?.(30); },
   endShift: (_, btn) => busy(btn, endShift),
-  settings: () => { $('#set-goal').value = PREF.goal; $('#set-big').checked = PREF.big; $('#set-tts').checked = PREF.tts; $('#set-notify').checked = PREF.notify; open('sh-set'); },
+  testPush: (_, btn) => busy(btn, async () => {
+    if (!inApp()) return toast('ต้องเปิดผ่านแอปของร้านก่อน', 'bad');
+    const j = await post('TEST_PUSH', { dr: me });
+    toast(j.recipients === 0 ? 'ส่งแล้ว แต่ยังไม่พบเครื่องที่ลงทะเบียน — กดอนุญาตแจ้งเตือนในแอป แล้วลองใหม่' : '✓ ส่งแล้ว ล็อกจอดูได้เลย', j.recipients === 0 ? 'bad' : 'ok');
+  }),
+  settings: () => { updPushSt(); $('#set-goal').value = PREF.goal; $('#set-big').checked = PREF.big; $('#set-tts').checked = PREF.tts; $('#set-notify').checked = PREF.notify; open('sh-set'); },
   saveSet: async () => {
     PREF.goal = Math.max(0, Number($('#set-goal').value) || 0); PREF.big = $('#set-big').checked; PREF.tts = $('#set-tts').checked; PREF.notify = $('#set-notify').checked;
     if (PREF.notify && 'Notification' in window && Notification.permission === 'default') { try { await Notification.requestPermission(); } catch (e) {} }
@@ -1109,7 +1145,7 @@ applyPref();
 (async () => {
   await pull();
   if (!D) { $('#s-boot').innerHTML = '<div class="boot"><div style="text-align:center"><div class="mark" style="margin:0 auto 16px">✦</div><p class="sub">เชื่อมต่อระบบไม่ได้</p><button class="btn btn-ghost btn-sm" onclick="location.reload()">ลองใหม่</button></div></div>'; startPoll(); return; }
-  if (me) { $('#start-name').textContent = me; show('start'); }
+  if (me) { $('#start-name').textContent = me; show('start'); pushLink(drExt(me)); }
   startPoll();
 })();
 </script>

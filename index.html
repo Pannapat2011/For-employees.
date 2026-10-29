@@ -310,6 +310,12 @@ body.big .app,body.big .panel,body.big .alert{zoom:1.15}
 .mic{min-height:46px;margin-top:8px}
 .mic.rec{background:var(--bad);color:#fff;animation:blink 1s infinite}
 .clean-list .pi{color:var(--ink);border-bottom-color:var(--line);font-size:16px;padding:12px 4px}
+.msgov{position:fixed;inset:0;z-index:180;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(5,3,1,.82);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.msgov .card{width:100%;max-width:400px;padding:22px;text-align:center}
+.msgov .mt{font-size:19px;line-height:1.55;margin:12px 0 18px;white-space:pre-wrap}
+.ros-i{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:14px;background:var(--card);border:1px solid var(--line);margin-bottom:8px}
+.ros-i.on{border-color:var(--ok);background:var(--ok-soft)}
+.brk-tot{margin-top:8px;font-size:15px;color:var(--ink2)}.brk-tot.over{color:var(--bad);font-weight:600}
 /* โหมดง่าย (㊳) */
 body.simple .stats,body.simple #goal,body.simple .hide-simple,body.simple #j-brief,body.simple #j-comm,body.simple #j-prep{display:none!important}
 body.simple .title{font-size:34px}
@@ -405,6 +411,7 @@ body.simple .link{font-size:17px}
       <span class="status warn"><span class="dot"></span>กำลังพักเบรก</span>
       <div class="break-time num" id="break-time">00:00</div>
       <p class="sub">แอดมินจะยังไม่ลงคิวให้คุณ จนกว่าจะกดกลับมารับงาน</p>
+      <div class="brk-tot" id="brk-tot"></div>
     </div>
     <div class="actions">
       <button class="btn btn-ok btn-xl" data-act="back">กลับมารับงาน</button>
@@ -548,6 +555,9 @@ body.simple .link{font-size:17px}
     <button class="gm" data-act="board"><em>🏆</em><b>อันดับ &amp; รีวิว</b><small>คะแนนของฉันเดือนนี้</small></button>
     <button class="gm" data-act="tip"><em>💝</em><b>รับทิป</b><small>QR พร้อมเพย์ของฉัน</small></button>
     <button class="gm" data-act="history"><em>📊</em><b>งานของฉัน</b><small>วันนี้ + 7 วัน</small></button>
+    <button class="gm" data-act="myRoster"><em>📆</em><b>เวรของฉัน</b><small>14 วันข้างหน้า</small></button>
+    <button class="gm" data-act="guide"><em>📖</em><b>คู่มือ</b><small>วิธีใช้แอปพนักงาน</small></button>
+    <button class="gm" data-act="inbox"><em>📢</em><b>ข้อความจากร้าน</b><small>ประกาศย้อนหลัง</small></button>
   </div>
   <button class="btn btn-ghost btn-sm" data-act="close" style="margin-top:14px">ปิด</button>
 </div></div>
@@ -608,6 +618,35 @@ body.simple .link{font-size:17px}
   <div class="cam-st" id="cam-st"></div>
   <button class="btn btn-gold btn-sm" data-act="snap" id="cam-snap" hidden>📸 ถ่ายรูป</button>
   <button class="btn btn-ghost btn-sm" data-act="close" style="margin-top:10px">ยกเลิก</button>
+</div></div>
+
+<div class="sheet" id="sh-roster" hidden><div class="panel">
+  <div class="grab"></div>
+  <h2>เวรของฉัน</h2>
+  <p class="sub" id="ro-sub"></p>
+  <div id="ro-list" style="margin-top:12px"></div>
+  <button class="btn btn-ghost btn-sm" data-act="close" style="margin-top:12px">ปิด</button>
+</div></div>
+
+<div class="sheet" id="sh-guide" hidden><div class="panel">
+  <div class="grab"></div>
+  <h2>คู่มือแอปพนักงาน</h2>
+  <div id="gd-body" class="lst"></div>
+  <button class="btn btn-ghost btn-sm" data-act="close" style="margin-top:12px">ปิด</button>
+</div></div>
+
+<div class="sheet" id="sh-inbox" hidden><div class="panel">
+  <div class="grab"></div>
+  <h2>ข้อความจากร้าน</h2>
+  <div id="ib-list" class="lst"></div>
+  <button class="btn btn-ghost btn-sm" data-act="close" style="margin-top:12px">ปิด</button>
+</div></div>
+
+<div class="msgov" id="msgov" hidden><div class="card">
+  <div style="font-size:46px" id="mo-ic">📢</div>
+  <div class="eyebrow" id="mo-from"></div>
+  <div class="mt" id="mo-text"></div>
+  <button class="btn btn-gold btn-xl" data-act="ackMsg">✓ รับทราบ</button>
 </div></div>
 
 <!-- confirm dialog -->
@@ -886,7 +925,7 @@ function apply(j) {
   if (j.cfg?.shop?.name) $('#shop').textContent = j.cfg.shop.name;
   if (!me) return renderLogin();
   if (D.drs && !D.drs.some(d => d.n === me)) { toast('ไม่พบชื่อของคุณในระบบแล้ว', 'bad'); return logout(); }
-  if (started) route();
+  if (started) { route(); checkMsgs(); }
 }
 function mine() { return (D?.qs || []).filter(q => q.dr === me); }
 function myStatus() { return (D?.drs || []).find(d => d.n === me)?.st || 'free'; }
@@ -990,12 +1029,13 @@ function tick() {
   watchdog(); escalate();
   if (!$('#s-checkin').hidden && now() % 15000 < 1000) updShift();
   if (!$('#s-clean').hidden) cleanTimer();
+  if (!$('#s-break').hidden && now() % 10000 < 1000) updBreakTot();
   if (!$('#s-break').hidden) {
     const at = Number(localStorage.getItem(LS.brk)) || now(), sec = Math.max(0, Math.floor((now() - at) / 1000));
     $('#break-time').textContent = `${pad(Math.floor(sec / 60))}:${pad(sec % 60)}`;
   }
 }
-function renderBreak() { if (!localStorage.getItem(LS.brk)) try { localStorage.setItem(LS.brk, String(now())); } catch (e) {} tick(); }
+function renderBreak() { updBreakTot(); if (!localStorage.getItem(LS.brk)) try { localStorage.setItem(LS.brk, String(now())); } catch (e) {} tick(); }
 
 /* ---------- alarm ---------- */
 function startAlarm(q) {
@@ -1254,7 +1294,7 @@ function shiftHTML() {
 function updShift() {
   const el = $('#ci-shift'); if (!el || $('#s-checkin').hidden) return;
   const h = shiftHTML(); el.className = 'shift ' + (h.cls || ''); el.innerHTML = h.t || '';
-  $('#ci-btn').innerHTML = G4().qrCheckin ? '📷 สแกน QR เช็คชื่อเข้างาน' : G4().selfie ? '🤳 ถ่ายรูปเช็คชื่อเข้างาน' : '✓ เช็คชื่อเข้างาน';
+  $('#ci-btn').innerHTML = G4().qrCheckin ? '📷 สแกน QR เช็คชื่อเข้างาน' : G4().selfie ? '🤳 ถ่ายรูปเช็คชื่อเข้างาน' : G4().gpsCheckin ? '📍 เช็คชื่อเข้างาน (ใช้ตำแหน่ง)' : '✓ เช็คชื่อเข้างาน';
 }
 
 /* ㊴ คิวของฉัน + เวลารอโดยประมาณ */
@@ -1346,6 +1386,11 @@ function snapSelfie() {
 }
 async function doCheckin(btn) {
   const g = G4(), data = { dr: me };
+  if (g.gpsCheckin) {
+    try { $('#ci-btn').textContent = '📍 กำลังหาตำแหน่ง…'; const c = await getPos(); data.lat = c.latitude; data.lng = c.longitude; data.acc = Math.round(c.accuracy); }
+    catch (e) { updShift(); return toast(e.message, 'bad'); }
+    updShift();
+  }
   if (g.qrCheckin) { const code = await camOpen('qr'); if (!code) return; data.code = code; }
   if (g.selfie) { const ph = await camOpen('selfie'); if (!ph) { if (!await ask('🤳', 'ไม่มีรูปเซลฟี', 'เช็คชื่อโดยไม่มีรูป? แอดมินจะเห็นว่า “ไม่มีรูป”', 'เช็คชื่อเลย')) return; } else data.photo = ph; }
   await busy(btn, async () => {
@@ -1455,6 +1500,50 @@ function speakState(scr) {
   if (m) setTimeout(() => say(m), 400);
 }
 
+
+/* ═════════ v5.0 (หน้าพนักงาน) ═════════ */
+/* ⑫ เช็คชื่อด้วย GPS */
+function getPos() {
+  return new Promise((ok, no) => {
+    if (!navigator.geolocation) return no(new Error('เครื่องนี้หาตำแหน่งไม่ได้'));
+    navigator.geolocation.getCurrentPosition(p => ok(p.coords), e => no(new Error(e.code === 1 ? 'ต้องอนุญาตให้แอปใช้ตำแหน่ง (GPS) ก่อน' : 'หาตำแหน่งไม่เจอ ลองออกไปที่โล่งแล้วกดใหม่')), { enableHighAccuracy: true, timeout: 15000, maximumAge: 30000 });
+  });
+}
+/* ㊼㊽ ข้อความ / ประกาศจากร้าน: ต้องกดรับทราบ */
+const myMsgs = () => (D?.msgs || []).filter(m => m.to === '*' || m.to === me);
+let showingMsg = '';
+function checkMsgs() {
+  if (!started || !me) return;
+  const m = myMsgs().find(x => !(x.ack && x.ack[me]) && !ackSent.has('m' + x.id));
+  if (!m) { $('#msgov').hidden = true; showingMsg = ''; return; }
+  if (showingMsg === m.id) return;
+  showingMsg = m.id;
+  $('#mo-ic').textContent = m.to === '*' ? '📢' : '💬';
+  $('#mo-from').textContent = (m.to === '*' ? 'ประกาศจาก' : 'ข้อความจาก') + (m.from || 'ร้าน') + ' · ' + fmtT(m.at);
+  $('#mo-text').textContent = m.text;
+  $('#msgov').hidden = false;
+  chime(true); navigator.vibrate?.([300, 120, 300]);
+  setTimeout(() => say((m.to === '*' ? 'ประกาศ ' : 'ข้อความ ') + m.text), 600);
+}
+/* ⑩ เวลาพักรวมวันนี้ */
+function updBreakTot() {
+  const el = $('#brk-tot'); if (!el) return;
+  const d = meDr(), mx = Number(G4().breakMax) || 0;
+  const tot = (d.brkDay === isoDay() ? d.brkMin || 0 : 0) + (d.brkAt ? Math.floor((now() - d.brkAt) / 60000) : 0);
+  el.className = 'brk-tot' + (mx && tot > mx ? ' over' : '');
+  el.textContent = mx ? `วันนี้พักรวม ${tot} / ${mx} นาที${tot > mx ? ' — เกินกำหนดแล้ว' : ''}` : `วันนี้พักรวม ${tot} นาที`;
+}
+/* ㊾ เวรของฉัน */
+function renderMyRoster() {
+  const ro = D?.roster || {}, days = [...Array(14)].map((_, i) => isoDay(now() + i * 864e5)), mine = days.filter(k => (ro[k] || []).includes(me));
+  $('#ro-sub').textContent = Object.keys(ro).length ? `มีเวร ${mine.length} วัน ใน 14 วันข้างหน้า · เข้างาน ${meDr().start || G4().shiftStart} น.` : 'ร้านยังไม่ได้ลงตารางเวร';
+  $('#ro-list').innerHTML = days.map(k => { const on = (ro[k] || []).includes(me), who = ro[k] || []; return `<div class="ros-i ${on ? 'on' : ''}"><div><b>${thD(k)}${k === isoDay() ? ' (วันนี้)' : ''}</b><small style="display:block;color:var(--muted);font-size:12.5px">${who.length ? 'เวร: ' + who.map(esc).join(', ') : 'ยังไม่ลงเวร'}</small></div><span>${on ? '✅ มีเวร' : ''}</span></div>`; }).join('');
+}
+/* ㊻ คู่มือ */
+const GUIDE_P = [['🙋 เช็คชื่อเข้างาน', 'มาถึงร้านแล้วกด “เช็คชื่อเข้างาน” (ถ้าร้านเปิดสแกน QR ให้สแกนที่จอเคาน์เตอร์ / เปิด GPS)'], ['🔔 รับคิว', 'มีคิวใหม่ มือถือจะดังและสั่น — ปัดปุ่มทองไปทางขวาเพื่อรับ ถ้าไม่สะดวกกด “ไม่สะดวกรับคิวนี้” แล้วเลือกเหตุผล'], ['🩺 ดูข้อมูลลูกค้า', 'ตัวแดง = อาการแพ้ / ข้อห้าม ต้องอ่านก่อนนวดทุกครั้ง'], ['✅ จบงาน', 'นวดเสร็จกด “นวดเสร็จแล้ว” บันทึกโน้ตถึงคนต่อไป (พูดใส่ไมค์ได้) แล้วติ๊กเก็บห้องให้ครบ'], ['☕ พัก', 'กด “พักเบรก” ตอนพัก และกด “กลับมารับงาน” เมื่อพร้อม — ร้านกำหนดเวลาพักรวมต่อวัน'], ['📝 ลา / เบิกเงิน', 'เมนูของฉัน › ขอลา หรือ ขอเบิกเงิน แล้วรอแอดมินอนุมัติ มีแจ้งเตือนกลับ'], ['🏁 เลิกงาน', 'ก่อนกลับกด “เลิกงานวันนี้” ทุกครั้ง ถ้าลืม ระบบจะเช็คเอาท์ให้และบันทึกว่าลืม']];
+const renderGuideP = () => { $('#gd-body').innerHTML = GUIDE_P.map(([h, t]) => `<div class="li" style="display:block"><b>${h}</b><small style="display:block;margin-top:4px;font-size:14px;color:var(--ink2)">${esc(t)}</small></div>`).join(''); };
+const renderInbox = () => { $('#ib-list').innerHTML = myMsgs().slice().reverse().map(m => `<div class="li" style="display:block"><b>${m.to === '*' ? '📢 ประกาศ' : '💬 ถึงคุณ'} · ${esc(m.from || '')}</b><small style="display:block;margin-top:4px;font-size:14.5px;color:var(--ink)">${esc(m.text)}</small><small>${new Date(m.at).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })} ${fmtT(m.at)}</small></div>`).join('') || '<div class="empty">ยังไม่มีข้อความ</div>'; };
+
 /* ---------- actions ---------- */
 function logout() { pushUnlink(); localStorage.removeItem(LS.name); me = ''; started = false; clearInterval(pollT); stopAlarm(); renderLogin(); startPoll(); }
 let bgTick = 0;
@@ -1515,6 +1604,11 @@ const A = {
     open('sh-hist');
   },
   close: (_, el) => close(el.closest('.sheet').id),
+  // v5.0
+  ackMsg: () => { const id = showingMsg; if (!id) return; ackSent.add('m' + id); $('#msgov').hidden = true; showingMsg = ''; try { speechSynthesis.cancel(); } catch (e) {} safePost('ACK_MSG', { id, dr: me }).catch(() => {}); setTimeout(checkMsgs, 300); },
+  myRoster: () => { close('sh-menu'); renderMyRoster(); setTimeout(() => open('sh-roster'), 250); },
+  guide: () => { close('sh-menu'); renderGuideP(); setTimeout(() => open('sh-guide'), 250); },
+  inbox: () => { close('sh-menu'); renderInbox(); setTimeout(() => open('sh-inbox'), 250); },
   // v4.0
   decline: () => {
     const rs = ['🤕 ปวดมือ / ไม่สบาย', '😟 ลูกค้าเคยมีปัญหากับฉัน', '🏃 ติดธุระด่วน 5–10 นาที', '🙅 ไม่ถนัดบริการนี้'];
